@@ -27,6 +27,7 @@ import {
   Mail,
   MapPin,
   Menu,
+  MessageCircle,
   Network,
   Newspaper,
   Package,
@@ -44,8 +45,14 @@ import {
   Zap,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+// ─── Language types & helpers ─────────────────────────────────────────────────
+type Lang = "en" | "ar";
+function makeT(lang: Lang) {
+  return (en: string, ar: string) => (lang === "ar" ? ar : en);
+}
 
 // ─── Page type ────────────────────────────────────────────────────────────────
 type Page =
@@ -60,13 +67,14 @@ type Page =
   | "fmcg"
   | "networking"
   | "construction-materials"
-  | "safety-ppe";
+  | "safety-ppe"
+  | "solar";
 
 // ─── Watermark component ──────────────────────────────────────────────────────
 function LogoWatermark({ size = 320 }: { size?: number }) {
   return (
     <img
-      src="/assets/generated/rayat-logo-transparent.dim_400x400-transparent.png"
+      src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
       alt=""
       aria-hidden="true"
       className="absolute pointer-events-none select-none"
@@ -97,7 +105,7 @@ function PageHero({
   breadcrumb: string;
 }) {
   return (
-    <section className="relative min-h-[340px] md:min-h-[420px] flex items-center justify-center overflow-hidden pt-20 md:pt-24">
+    <section className="relative min-h-[400px] md:min-h-[500px] flex items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${image}')` }}
@@ -112,20 +120,20 @@ function PageHero({
       />
       <LogoWatermark size={340} />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16 pt-32 md:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <p className="text-brand-gold/90 font-medium text-sm tracking-widest uppercase mb-3">
+          <p className="text-brand-gold/90 font-medium text-sm tracking-widest uppercase mb-3 text-outline">
             RAYAT Industries Trading SPC &nbsp;/&nbsp; {breadcrumb}
           </p>
-          <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-4 text-shadow-lg">
+          <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-4 text-outline-strong">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed text-shadow-md">
+            <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed text-outline">
               {subtitle}
             </p>
           )}
@@ -154,13 +162,28 @@ function PageHero({
 function Navbar({
   currentPage,
   setCurrentPage,
+  lang,
+  setLang,
 }: {
   currentPage: Page;
   setCurrentPage: (p: Page) => void;
+  lang: Lang;
+  setLang: (l: Lang) => void;
 }) {
+  const t = makeT(lang);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [tradingDropdownOpen, setTradingDropdownOpen] = useState(false);
   const [mobileTradingOpen, setMobileTradingOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: currentPage is a prop used to reset scroll on navigation
+  useEffect(() => {
+    // Reset to top on page change, then start listening
+    setScrolled(false);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [currentPage]);
 
   const tradingDivisionPages: Page[] = [
     "trading-divisions",
@@ -168,21 +191,32 @@ function Navbar({
     "networking",
     "construction-materials",
     "safety-ppe",
+    "solar",
   ];
   const isTradingActive = tradingDivisionPages.includes(currentPage);
 
   const navLinks: { label: string; page: Page }[] = [
-    { label: "Home", page: "home" },
-    { label: "Portfolio", page: "portfolio" },
-    { label: "Services", page: "services" },
+    { label: t("Home", "الرئيسية"), page: "home" },
+    { label: t("Portfolio", "المحفظة"), page: "portfolio" },
+    { label: t("Services", "الخدمات"), page: "services" },
   ];
 
   const tradingSubLinks: { label: string; page: Page }[] = [
-    { label: "Trading Overview", page: "trading-divisions" },
-    { label: "FMCG Division", page: "fmcg" },
-    { label: "Networking Division", page: "networking" },
-    { label: "Construction Materials", page: "construction-materials" },
-    { label: "Safety & PPE / Metals", page: "safety-ppe" },
+    {
+      label: t("Trading Overview", "نظرة عامة على التداول"),
+      page: "trading-divisions",
+    },
+    { label: t("Solar Division", "قسم الطاقة الشمسية"), page: "solar" },
+    { label: t("FMCG Division", "قسم السلع الاستهلاكية"), page: "fmcg" },
+    { label: t("Networking Division", "قسم الشبكات"), page: "networking" },
+    {
+      label: t("Construction Materials", "مواد البناء"),
+      page: "construction-materials",
+    },
+    {
+      label: t("Safety & PPE / Metals", "السلامة والمعادن"),
+      page: "safety-ppe",
+    },
   ];
 
   function navigate(page: Page) {
@@ -192,25 +226,68 @@ function Navbar({
     setTradingDropdownOpen(false);
   }
 
+  // Pages without a full-bleed hero video/image — use opaque navbar from the start
+  const hasHeroVideo: boolean = currentPage === "home";
+
+  const isTransparent = !scrolled && hasHeroVideo;
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-brand-sand-gold shadow-lg">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isTransparent
+          ? "bg-transparent"
+          : "bg-white/95 backdrop-blur-md shadow-md"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 md:h-24">
+        <div className="flex items-center justify-between h-28 md:h-32">
           {/* Logo + Name */}
           <button
             type="button"
             data-ocid="nav.home.link"
-            className="flex items-center gap-3 min-w-0 cursor-pointer"
+            className="flex items-center gap-4 min-w-0 cursor-pointer"
             onClick={() => navigate("home")}
           >
             <img
-              src="/assets/generated/rayat-logo-transparent.dim_400x400-transparent.png"
+              src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
               alt="RAYAT Industries Trading SPC Logo"
               className="w-auto object-contain flex-shrink-0"
-              style={{ height: "72px" }}
+              style={{ height: "96px" }}
             />
-            <span className="text-brand-teal-dark font-bold text-sm md:text-base lg:text-lg leading-tight tracking-wide font-display">
-              RAYAT Industries Trading SPC
+            <span className="flex flex-col leading-none font-display transition-colors duration-300">
+              <span
+                className={`font-bold text-base md:text-lg lg:text-xl tracking-wide transition-colors duration-300 ${
+                  isTransparent ? "text-white" : "text-brand-teal-dark"
+                }`}
+                style={
+                  isTransparent
+                    ? {
+                        textShadow:
+                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
+                      }
+                    : undefined
+                }
+              >
+                RAYAT Industries
+              </span>
+              <span
+                className={`font-medium text-sm md:text-base tracking-wide mt-0.5 transition-colors duration-300 ${
+                  isTransparent ? "text-brand-gold" : "text-brand-gold"
+                }`}
+                style={{
+                  fontFamily:
+                    "'Amiri', 'Scheherazade New', 'Arabic UI Text', serif",
+                  direction: "rtl",
+                  ...(isTransparent
+                    ? {
+                        textShadow:
+                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
+                      }
+                    : undefined),
+                }}
+              >
+                رايات للصناعات
+              </span>
             </span>
           </button>
 
@@ -222,11 +299,23 @@ function Navbar({
                 key={link.page}
                 data-ocid={`nav.${link.page}.link`}
                 onClick={() => navigate(link.page)}
-                className={`font-medium text-sm tracking-wide transition-colors duration-200 cursor-pointer pb-0.5 ${
+                className={`font-medium text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
                   currentPage === link.page
-                    ? "text-brand-teal border-b-2 border-brand-teal"
-                    : "text-brand-teal-dark hover:text-brand-teal"
+                    ? isTransparent
+                      ? "text-white border-b-2 border-white"
+                      : "text-brand-teal border-b-2 border-brand-teal"
+                    : isTransparent
+                      ? "text-white/90 hover:text-white"
+                      : "text-brand-teal-dark hover:text-brand-teal"
                 }`}
+                style={
+                  isTransparent
+                    ? {
+                        textShadow:
+                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
+                      }
+                    : undefined
+                }
               >
                 {link.label}
               </button>
@@ -241,13 +330,25 @@ function Navbar({
                 onBlur={() =>
                   setTimeout(() => setTradingDropdownOpen(false), 150)
                 }
-                className={`flex items-center gap-1 font-medium text-sm tracking-wide transition-colors duration-200 cursor-pointer pb-0.5 ${
+                className={`flex items-center gap-1 font-medium text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
                   isTradingActive
-                    ? "text-brand-teal border-b-2 border-brand-teal"
-                    : "text-brand-teal-dark hover:text-brand-teal"
+                    ? isTransparent
+                      ? "text-white border-b-2 border-white"
+                      : "text-brand-teal border-b-2 border-brand-teal"
+                    : isTransparent
+                      ? "text-white/90 hover:text-white"
+                      : "text-brand-teal-dark hover:text-brand-teal"
                 }`}
+                style={
+                  isTransparent
+                    ? {
+                        textShadow:
+                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
+                      }
+                    : undefined
+                }
               >
-                Trading
+                {t("Trading", "التداول")}
                 <ChevronDown
                   size={14}
                   className={`transition-transform duration-200 ${tradingDropdownOpen ? "rotate-180" : ""}`}
@@ -282,15 +383,42 @@ function Navbar({
               </AnimatePresence>
             </div>
 
+            {/* Language toggle */}
+            <button
+              type="button"
+              data-ocid="nav.lang.toggle"
+              onClick={() => setLang(lang === "en" ? "ar" : "en")}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border-2 transition-all duration-200 ${
+                isTransparent
+                  ? "border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-gray-900"
+                  : "border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-gray-900"
+              }`}
+              style={
+                isTransparent
+                  ? {
+                      textShadow:
+                        "-1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)",
+                    }
+                  : undefined
+              }
+              aria-label={
+                lang === "en" ? "Switch to Arabic" : "Switch to English"
+              }
+            >
+              {lang === "en" ? "عربي" : "EN"}
+            </button>
+
             <button
               type="button"
               data-ocid="nav.contact.primary_button"
               onClick={() => navigate("contact")}
-              className={`bg-brand-teal text-white px-4 py-2 rounded font-semibold text-sm hover:bg-brand-teal-dark transition-colors ${
-                currentPage === "contact" ? "ring-2 ring-brand-teal-dark" : ""
-              }`}
+              className={`px-4 py-2 rounded font-semibold text-sm transition-all duration-300 ${
+                isTransparent
+                  ? "bg-white/20 border border-white text-white hover:bg-white/40 backdrop-blur-sm"
+                  : "bg-brand-teal text-white hover:bg-brand-teal-dark"
+              } ${currentPage === "contact" && !isTransparent ? "ring-2 ring-brand-teal-dark" : ""}`}
             >
-              Contact Us
+              {t("Contact Us", "تواصل معنا")}
             </button>
           </nav>
 
@@ -298,7 +426,9 @@ function Navbar({
           <button
             type="button"
             data-ocid="nav.mobile_menu.toggle"
-            className="lg:hidden text-brand-teal-dark p-2"
+            className={`lg:hidden p-2 transition-colors duration-300 ${
+              isTransparent ? "text-white" : "text-brand-teal-dark"
+            }`}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
           >
@@ -315,7 +445,7 @@ function Navbar({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden bg-brand-sand-gold border-t border-brand-teal/20 overflow-hidden"
+            className="lg:hidden bg-white/95 backdrop-blur-md border-t border-brand-teal/20 overflow-hidden"
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {navLinks.map((link) => (
@@ -345,7 +475,7 @@ function Navbar({
                     : "text-brand-teal-dark hover:bg-brand-teal/10"
                 }`}
               >
-                <span>Trading Divisions</span>
+                <span>{t("Trading Divisions", "أقسام التداول")}</span>
                 <ChevronDown
                   size={14}
                   className={`transition-transform ${mobileTradingOpen ? "rotate-180" : ""}`}
@@ -377,7 +507,22 @@ function Navbar({
                 onClick={() => navigate("contact")}
                 className="bg-brand-teal text-white px-4 py-2.5 rounded-lg font-semibold text-sm text-center hover:bg-brand-teal-dark transition-colors mt-2"
               >
-                Contact Us
+                {t("Contact Us", "تواصل معنا")}
+              </button>
+
+              {/* Mobile language toggle */}
+              <button
+                type="button"
+                data-ocid="nav.mobile.lang.toggle"
+                onClick={() => {
+                  setLang(lang === "en" ? "ar" : "en");
+                  setMobileOpen(false);
+                }}
+                className="border-2 border-brand-gold text-brand-gold px-4 py-2 rounded-lg font-bold text-sm text-center hover:bg-brand-gold hover:text-gray-900 transition-colors mt-1"
+              >
+                {lang === "en"
+                  ? "عربي | Switch to Arabic"
+                  : "EN | Switch to English"}
               </button>
             </div>
           </motion.div>
@@ -394,11 +539,15 @@ function scrollTo(id: string) {
 }
 
 // ─── HOME PAGE ────────────────────────────────────────────────────────────────
-function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
+function HeroSection({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  const t = makeT(lang);
   return (
     <section
       id="hero"
-      className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-20 md:pt-24"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Static image fallback */}
       <div
@@ -440,27 +589,38 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <p
-            className="text-brand-gold font-semibold text-2xl md:text-3xl mb-3 tracking-widest"
+            className="font-semibold text-2xl md:text-3xl mb-3 tracking-widest text-outline"
             dir="rtl"
-            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}
+            style={{ color: "rgba(201,168,76,0.45)" }}
           >
             رايات للصناعات والتجارة
           </p>
-          <h1
-            className="font-display text-white font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight mb-6"
-            style={{
-              textShadow:
-                "0 4px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4)",
-            }}
-          >
-            RAYAT Industries Trading SPC
+          <h1 className="mb-6">
+            <span
+              className="font-display text-white font-black block text-outline-strong"
+              style={{
+                fontSize: "clamp(5rem, 12vw, 9rem)",
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              RAYAT
+            </span>
+            <span
+              className="font-display text-brand-gold/90 font-semibold block tracking-[0.3em] uppercase text-outline"
+              style={{
+                fontSize: "clamp(1rem, 2.5vw, 1.8rem)",
+                marginTop: "0.25em",
+              }}
+            >
+              industries
+            </span>
           </h1>
-          <p
-            className="text-white/85 text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed"
-            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
-          >
-            Building Oman's Future Through Industrial Excellence &amp; Global
-            Trade
+          <p className="text-white/85 text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed text-outline">
+            {t(
+              "Building Oman's Future Through Industrial Excellence & Global Trade",
+              "بناء مستقبل عُمان من خلال التميز الصناعي والتجارة العالمية",
+            )}
           </p>
 
           <motion.div
@@ -473,10 +633,23 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
               type="button"
               data-ocid="hero.explore_sectors.primary_button"
               onClick={() => scrollTo("sectors")}
-              className="inline-flex items-center justify-center gap-2 bg-brand-gold text-gray-900 font-bold px-8 py-4 rounded hover:opacity-90 active:scale-95 transition-all duration-200 text-base shadow-xl"
+              className="inline-flex items-center justify-center gap-2 font-bold px-8 py-4 rounded active:scale-95 transition-all duration-200 text-base shadow-xl"
+              style={{
+                backgroundColor: "rgba(201,168,76,0.45)",
+                color: "rgba(255,255,255,0.92)",
+                border: "1px solid rgba(201,168,76,0.5)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                  "rgba(201,168,76,0.6)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                  "rgba(201,168,76,0.45)";
+              }}
             >
-              Explore Our Sectors
-              <ChevronRight size={18} />
+              {t("Explore Our Sectors", "استكشف قطاعاتنا")}
+              <ChevronRight size={18} className="rtl:rotate-180" />
             </button>
             <button
               type="button"
@@ -484,7 +657,7 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
               onClick={() => navigate("contact")}
               className="inline-flex items-center justify-center gap-2 border-2 border-white text-white font-bold px-8 py-4 rounded hover:bg-white hover:text-brand-teal active:scale-95 transition-all duration-200 text-base"
             >
-              Contact Us
+              {t("Contact Us", "تواصل معنا")}
             </button>
           </motion.div>
         </motion.div>
@@ -508,12 +681,13 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
   );
 }
 
-function AboutSection() {
+function AboutSection({ lang }: { lang: Lang }) {
+  const t = makeT(lang);
   const stats = [
-    { value: "10+", label: "Years Experience" },
-    { value: "4+", label: "Industry Sectors" },
-    { value: "50+", label: "Trusted Partners" },
-    { value: "100%", label: "Omani Owned" },
+    { value: "10+", label: t("Years Experience", "سنوات خبرة") },
+    { value: "4+", label: t("Industry Sectors", "قطاعات صناعية") },
+    { value: "50+", label: t("Trusted Partners", "شركاء موثوقون") },
+    { value: "100%", label: t("Omani Owned", "ملكية عُمانية") },
   ];
 
   return (
@@ -526,24 +700,23 @@ function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
-              Who We Are
+            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
+              {t("Who We Are", "من نحن")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
-              About RAYAT Industries Trading SPC
+              {t("About RAYAT Industries", "عن رايات للصناعات والتجارة")}
             </h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-6">
-              RAYAT Industries Trading SPC is a dynamic Omani company committed
-              to driving industrial growth and facilitating global trade across
-              the Sultanate. Founded on principles of integrity, quality, and
-              innovation, we serve as a trusted partner for businesses across
-              construction, agriculture, general trading, and industrial supply
-              sectors.
+              {t(
+                "RAYAT Industries is a dynamic Omani company committed to driving industrial growth and facilitating global trade across the Sultanate. Founded on principles of integrity, quality, and innovation, we serve as a trusted partner for businesses across solar energy, seafood & food trading, construction, general trading, and industrial supply sectors.",
+                "رايات للصناعات والتجارة ش.ش.ف هي شركة عُمانية ديناميكية ملتزمة بدفع عجلة النمو الصناعي وتيسير التجارة العالمية في جميع أنحاء السلطنة. تأسست على مبادئ النزاهة والجودة والابتكار، ونعمل كشريك موثوق للشركات في قطاعات البناء والزراعة والتجارة العامة والإمدادات الصناعية.",
+              )}
             </p>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-10">
-              Our deep market knowledge and strong supplier networks allow us to
-              deliver reliable solutions that meet the evolving needs of Oman's
-              growing economy.
+              {t(
+                "Our deep market knowledge and strong supplier networks allow us to deliver reliable solutions that meet the evolving needs of Oman's growing economy.",
+                "تتيح لنا معرفتنا العميقة بالسوق وشبكات الموردين القوية تقديم حلول موثوقة تلبي الاحتياجات المتطورة لاقتصاد عُمان المتنامي.",
+              )}
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -603,60 +776,89 @@ function AboutSection() {
   );
 }
 
-const sectors = [
-  {
-    title: "Construction & Infrastructure",
-    description:
-      "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Oman and the GCC.",
-    image: "/assets/generated/sector-construction.dim_600x400.jpg",
-    icon: Building2,
-    color: "text-brand-teal",
-    bg: "bg-brand-teal/10",
-    page: "services" as Page,
-  },
-  {
-    title: "Agriculture & Food Trading",
-    description:
-      "From grain and fresh produce to agricultural inputs, we connect Omani businesses with reliable global food supply chains.",
-    image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
-    icon: Wheat,
-    color: "text-green-700",
-    bg: "bg-green-50",
-    page: "services" as Page,
-  },
-  {
-    title: "General Trading & Logistics",
-    description:
-      "Our general trading operations cover a broad range of commodities, managed through efficient logistics and strong international partnerships.",
-    image: "/assets/generated/sector-trading.dim_600x400.jpg",
-    icon: Truck,
-    color: "text-brand-terracotta",
-    bg: "bg-brand-terracotta/10",
-    page: "services" as Page,
-  },
-  {
-    title: "Industrial Supplies",
-    description:
-      "We source and distribute a comprehensive range of industrial supplies, tools, and equipment to meet the operational demands of manufacturing and production facilities.",
-    image: "/assets/generated/sector-industrial.dim_600x400.jpg",
-    icon: Factory,
-    color: "text-brand-gold",
-    bg: "bg-brand-gold/10",
-    page: "services" as Page,
-  },
-  {
-    title: "Trading Divisions",
-    description:
-      "FMCG, Networking, Construction Materials & Safety/PPE — our specialized trading divisions power the Gulf economy with premium products.",
-    image: "/assets/generated/trading-divisions-overview.dim_1400x600.jpg",
-    icon: Globe,
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-    page: "trading-divisions" as Page,
-  },
-];
+function getSectors(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      title: t("Construction & Infrastructure", "البناء والبنية التحتية"),
+      description: t(
+        "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Oman and the GCC.",
+        "نوفر مواد بناء عالية الجودة ومعدات وخدمات دعم المشاريع للمقاولين والمطورين في عُمان ودول الخليج.",
+      ),
+      image: "/assets/generated/sector-construction.dim_600x400.jpg",
+      icon: Building2,
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+      page: "services" as Page,
+    },
+    {
+      title: t("Seafood & Food Trading", "المأكولات البحرية وتجارة الأغذية"),
+      description: t(
+        "Premium seafood (shrimp, tuna, salmon, mackerel, squid and more), poultry, and agricultural products connecting Oman with global supply chains.",
+        "مأكولات بحرية متميزة (روبيان، تونة، سلمون وأكثر) ودواجن ومنتجات زراعية تربط عُمان بسلاسل الإمداد العالمية.",
+      ),
+      image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+      icon: Wheat,
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+      page: "fmcg" as Page,
+    },
+    {
+      title: t("General Trading & Logistics", "التجارة العامة واللوجستيات"),
+      description: t(
+        "Our general trading operations cover a broad range of commodities, managed through efficient logistics and strong international partnerships.",
+        "تغطي عملياتنا التجارية العامة مجموعة واسعة من السلع، تُدار من خلال لوجستيات فعّالة وشراكات دولية قوية.",
+      ),
+      image: "/assets/generated/sector-trading.dim_600x400.jpg",
+      icon: Truck,
+      color: "text-brand-terracotta",
+      bg: "bg-brand-terracotta/10",
+      page: "services" as Page,
+    },
+    {
+      title: t("Industrial Supplies", "الإمدادات الصناعية"),
+      description: t(
+        "We source and distribute a comprehensive range of industrial supplies, tools, and equipment to meet the operational demands of manufacturing and production facilities.",
+        "نوفر ونوزع مجموعة شاملة من الإمدادات الصناعية والأدوات والمعدات لتلبية متطلبات مرافق التصنيع والإنتاج.",
+      ),
+      image: "/assets/generated/sector-industrial.dim_600x400.jpg",
+      icon: Factory,
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+      page: "services" as Page,
+    },
+    {
+      title: t("Solar & Renewable Energy", "الطاقة الشمسية والمتجددة"),
+      description: t(
+        "Solar power generation, energy storage systems, solar heating, and complete renewable energy solutions for Oman and the Gulf.",
+        "توليد الطاقة الشمسية وأنظمة تخزين الطاقة والتدفئة الشمسية وحلول الطاقة المتجددة الكاملة.",
+      ),
+      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+      icon: Zap,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      page: "solar" as Page,
+    },
+    {
+      title: t("Trading Divisions", "أقسام التداول"),
+      description: t(
+        "FMCG (Seafood, Poultry & more), Solar Division, Networking, Construction Materials & Safety/PPE — our specialized trading divisions power the Gulf economy.",
+        "السلع الاستهلاكية والطاقة الشمسية والشبكات ومواد البناء والسلامة — أقسامنا المتخصصة تُقوّي الاقتصاد الخليجي بمنتجات متميزة.",
+      ),
+      image: "/assets/generated/trading-divisions-overview.dim_1400x600.jpg",
+      icon: Globe,
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+      page: "trading-divisions" as Page,
+    },
+  ];
+}
 
-function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
+function SectorsSection({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  const t = makeT(lang);
   return (
     <section id="sectors" className="py-20 md:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -667,16 +869,16 @@ function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
           className="text-center mb-14"
         >
           <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
-            What We Do
+            {t("What We Do", "ما نقوم به")}
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-            Our Industry Sectors
+            {t("Our Industry Sectors", "قطاعاتنا الصناعية")}
           </h2>
           <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8">
-          {sectors.map((sector, i) => {
+          {getSectors(lang).map((sector, i) => {
             const Icon = sector.icon;
             return (
               <motion.button
@@ -704,7 +906,9 @@ function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
                     className={`inline-flex items-center gap-2 ${sector.bg} ${sector.color} rounded-lg px-3 py-1.5 mb-3`}
                   >
                     <Icon size={16} />
-                    <span className="text-xs font-semibold">Sector</span>
+                    <span className="text-xs font-semibold">
+                      {t("Sector", "قطاع")}
+                    </span>
                   </div>
                   <h3 className="font-display font-bold text-brand-teal-dark text-lg mb-2 leading-snug">
                     {sector.title}
@@ -722,38 +926,46 @@ function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
   );
 }
 
-const features = [
-  {
-    icon: Users,
-    title: "Trusted Partnerships",
-    description:
-      "Built on years of reliable relationships with global suppliers and local clients",
-    accent: "bg-brand-teal/10 text-brand-teal",
-  },
-  {
-    icon: MapPin,
-    title: "Local Expertise",
-    description:
-      "Deep understanding of Oman's market, regulations, and business culture",
-    accent: "bg-brand-gold/10 text-brand-gold",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Quality Assured",
-    description:
-      "Every product and service meets rigorous quality standards before delivery",
-    accent: "bg-green-50 text-green-700",
-  },
-  {
-    icon: Package,
-    title: "End-to-End Solutions",
-    description:
-      "From sourcing to delivery, we manage the entire supply chain for our clients",
-    accent: "bg-brand-terracotta/10 text-brand-terracotta",
-  },
-];
-
-function WhyUsSection() {
+function WhyUsSection({ lang }: { lang: Lang }) {
+  const t = makeT(lang);
+  const features = [
+    {
+      icon: Users,
+      title: t("Trusted Partnerships", "شراكات موثوقة"),
+      description: t(
+        "Built on years of reliable relationships with global suppliers and local clients",
+        "مبنية على سنوات من العلاقات الموثوقة مع الموردين العالميين والعملاء المحليين",
+      ),
+      accent: "bg-brand-teal/10 text-brand-teal",
+    },
+    {
+      icon: MapPin,
+      title: t("Local Expertise", "خبرة محلية"),
+      description: t(
+        "Deep understanding of Oman's market, regulations, and business culture",
+        "فهم عميق لسوق عُمان وأنظمتها وثقافتها التجارية",
+      ),
+      accent: "bg-brand-gold/10 text-brand-gold",
+    },
+    {
+      icon: ShieldCheck,
+      title: t("Quality Assured", "جودة مضمونة"),
+      description: t(
+        "Every product and service meets rigorous quality standards before delivery",
+        "كل منتج وخدمة تستوفي معايير الجودة الصارمة قبل التسليم",
+      ),
+      accent: "bg-green-50 text-green-700",
+    },
+    {
+      icon: Package,
+      title: t("End-to-End Solutions", "حلول متكاملة"),
+      description: t(
+        "From sourcing to delivery, we manage the entire supply chain for our clients",
+        "من التوريد إلى التسليم، ندير سلسلة التوريد بأكملها لعملائنا",
+      ),
+      accent: "bg-brand-terracotta/10 text-brand-terracotta",
+    },
+  ];
   return (
     <section
       id="why-us"
@@ -788,11 +1000,11 @@ function WhyUsSection() {
           viewport={{ once: true }}
           className="text-center mb-14"
         >
-          <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3">
-            Our Advantage
+          <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3 text-outline">
+            {t("Our Advantage", "ميزتنا")}
           </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-            Why Choose RAYAT?
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-white text-outline">
+            {t("Why Choose RAYAT?", "لماذا تختار رايات؟")}
           </h2>
           <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
         </motion.div>
@@ -814,10 +1026,10 @@ function WhyUsSection() {
                 >
                   <Icon size={22} />
                 </div>
-                <h3 className="font-display font-bold text-white text-lg mb-2">
+                <h3 className="font-display font-bold text-white text-lg mb-2 text-outline">
                   {feature.title}
                 </h3>
-                <p className="text-white/75 text-sm leading-relaxed">
+                <p className="text-white/75 text-sm leading-relaxed text-outline">
                   {feature.description}
                 </p>
               </motion.div>
@@ -829,7 +1041,131 @@ function WhyUsSection() {
   );
 }
 
-function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
+// ─── VISION & MISSION SECTION ──────────────────────────────────────────────────
+function VisionMissionSection({ lang }: { lang: Lang }) {
+  const t = makeT(lang);
+
+  const coreValues = [
+    { label: t("Integrity", "النزاهة"), icon: ShieldCheck },
+    { label: t("Excellence", "التميز"), icon: Star },
+    { label: t("Partnership", "الشراكة"), icon: Handshake },
+    { label: t("Innovation", "الابتكار"), icon: Lightbulb },
+  ];
+
+  return (
+    <section className="py-20 md:py-28 bg-brand-teal-dark relative overflow-hidden">
+      {/* Geometric gold pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-5"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(201,168,76,0.3) 30px, rgba(201,168,76,0.3) 32px), repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(201,168,76,0.3) 30px, rgba(201,168,76,0.3) 32px)",
+        }}
+      />
+      <LogoWatermark size={380} />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3 text-outline">
+            {t("Our Purpose", "غايتنا")}
+          </span>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-white text-outline">
+            {t("Vision & Mission", "الرؤية والرسالة")}
+          </h2>
+          <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          {/* Vision */}
+          <motion.div
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="bg-white/8 backdrop-blur-sm border border-brand-gold/30 rounded-2xl p-8 hover:border-brand-gold/60 transition-colors duration-300"
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-brand-gold/20 flex items-center justify-center flex-shrink-0">
+                <Eye size={22} className="text-brand-gold" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-brand-gold text-outline">
+                {t("Our Vision", "رؤيتنا")}
+              </h3>
+            </div>
+            <p className="text-white/85 text-base md:text-lg leading-relaxed text-outline">
+              {t(
+                "To be the leading industrial and trading powerhouse of the Middle East — a bridge between global markets and regional ambition, aligned with Oman Vision 2040 and the Gulf's transformative economic agenda.",
+                "أن نكون القوة الصناعية والتجارية الرائدة في الشرق الأوسط — جسر بين الأسواق العالمية والطموح الإقليمي، متوافقين مع رؤية عُمان 2040 وأجندة التحول الاقتصادي الخليجي.",
+              )}
+            </p>
+          </motion.div>
+
+          {/* Mission */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="bg-white/8 backdrop-blur-sm border border-white/20 rounded-2xl p-8 hover:border-brand-gold/40 transition-colors duration-300"
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
+                <Lightbulb size={22} className="text-white" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-white text-outline">
+                {t("Our Mission", "رسالتنا")}
+              </h3>
+            </div>
+            <p className="text-white/85 text-base md:text-lg leading-relaxed text-outline">
+              {t(
+                "To deliver uncompromising quality and reliability across every trade, supply, and partnership — empowering businesses across Oman, the GCC, and beyond to build, grow, and prosper.",
+                "تقديم الجودة والموثوقية التي لا تقبل المساومة في كل تجارة وإمداد وشراكة — تمكين الشركات في عُمان والخليج العربي وما وراءها من البناء والنمو والازدهار.",
+              )}
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Core Values chips */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-4"
+        >
+          {coreValues.map((val, i) => {
+            const Icon = val.icon;
+            return (
+              <motion.div
+                key={val.label}
+                data-ocid={`vision.value.card.${i + 1}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 + 0.4 }}
+                className="flex items-center gap-2 bg-brand-gold/15 border border-brand-gold/40 text-brand-gold px-5 py-2.5 rounded-full font-semibold text-sm"
+              >
+                <Icon size={15} />
+                {val.label}
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function HomeContactCTA({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  const t = makeT(lang);
   return (
     <section className="py-16 md:py-24 bg-brand-sand">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -839,14 +1175,16 @@ function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
           viewport={{ once: true }}
         >
           <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
-            Reach Out
+            {t("Reach Out", "تواصل معنا")}
           </span>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Ready to Work With Us?
+            {t("Ready to Work With Us?", "مستعد للعمل معنا؟")}
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-            Whether you need industrial supplies or general trading services —
-            we're here to help. Contact our team for a prompt response.
+            {t(
+              "Whether you need industrial supplies or general trading services — we're here to help. Contact our team for a prompt response.",
+              "سواء كنت بحاجة إلى إمدادات صناعية أو خدمات تجارية عامة — نحن هنا للمساعدة. تواصل مع فريقنا للحصول على رد سريع.",
+            )}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -855,9 +1193,19 @@ function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
               onClick={() => navigate("contact")}
               className="inline-flex items-center justify-center gap-2 bg-brand-teal text-white font-bold px-8 py-4 rounded-lg hover:bg-brand-teal-dark transition-colors text-base shadow-lg"
             >
-              <Mail size={18} />
-              Get In Touch
+              <MessageCircle size={18} />
+              {t("Get In Touch", "تواصل معنا")}
             </button>
+            <a
+              href="https://wa.me/96824000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ocid="home.whatsapp_cta.secondary_button"
+              className="inline-flex items-center justify-center gap-2 bg-green-500 text-white font-bold px-8 py-4 rounded-lg hover:bg-green-600 transition-colors text-base shadow-lg"
+            >
+              <MessageCircle size={18} />
+              {t("WhatsApp Us", "واتساب")}
+            </a>
           </div>
         </motion.div>
       </div>
@@ -865,14 +1213,18 @@ function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
   );
 }
 
-function HomePage({ navigate }: { navigate: (p: Page) => void }) {
+function HomePage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
   return (
     <>
-      <HeroSection navigate={navigate} />
-      <AboutSection />
-      <SectorsSection navigate={navigate} />
-      <WhyUsSection />
-      <HomeContactCTA navigate={navigate} />
+      <HeroSection navigate={navigate} lang={lang} />
+      <AboutSection lang={lang} />
+      <SectorsSection navigate={navigate} lang={lang} />
+      <WhyUsSection lang={lang} />
+      <VisionMissionSection lang={lang} />
+      <HomeContactCTA navigate={navigate} lang={lang} />
     </>
   );
 }
@@ -946,7 +1298,11 @@ const recruitmentSteps = [
   },
 ];
 
-function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
+function LabourPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang; // lang available for future use
   return (
     <div>
       <PageHero
@@ -965,7 +1321,7 @@ function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Workforce Solutions
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -1130,7 +1486,7 @@ function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Documentation
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -1331,7 +1687,11 @@ const services = [
   },
 ];
 
-function ServicesPage({ navigate }: { navigate: (p: Page) => void }) {
+function ServicesPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
@@ -1538,7 +1898,10 @@ type PortfolioFilter =
   | "Agriculture"
   | "Industrial"
   | "Trading"
-  | "Manpower";
+  | "Manpower"
+  | "Seafood"
+  | "Poultry"
+  | "Solar";
 
 const projects = [
   {
@@ -1597,6 +1960,49 @@ const projects = [
     desc: "Established a multi-supplier fresh produce distribution network across Oman, Kuwait, and Qatar.",
     image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
   },
+  // New seafood / poultry / solar projects
+  {
+    name: "Gulf Shrimp & Tuna Export Program",
+    sector: "Seafood" as PortfolioFilter,
+    year: "2024",
+    desc: "Coordinated large-scale export of fresh Omani shrimp, yellowfin tuna, and mackerel to premium buyers in the UAE, Qatar, and Saudi Arabia.",
+    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+  },
+  {
+    name: "Muscat Seafood Cold-Chain Distribution",
+    sector: "Seafood" as PortfolioFilter,
+    year: "2023",
+    desc: "Set up a temperature-controlled distribution network supplying squid, cuttlefish, mussels, and clams to supermarkets and restaurants across Muscat.",
+    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+  },
+  {
+    name: "Integrated Poultry Supply — Oman Retailers",
+    sector: "Poultry" as PortfolioFilter,
+    year: "2024",
+    desc: "Long-term supply agreement delivering graded whole chicken (800g, 1000g, 1100g classes) and fresh eggs to leading Omani supermarket chains.",
+    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+  },
+  {
+    name: "Poultry & Egg Distribution — Sohar Region",
+    sector: "Poultry" as PortfolioFilter,
+    year: "2023",
+    desc: "Established reliable weekly delivery cycles for standardised chicken cuts and free-range eggs to food service businesses and hotels in Sohar.",
+    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+  },
+  {
+    name: "Muscat Commercial Solar Rooftop Installation",
+    sector: "Solar" as PortfolioFilter,
+    year: "2024",
+    desc: "Supplied and commissioned a 500 kW rooftop solar power generation system for a large commercial warehouse complex in Al Rusayl Industrial Estate.",
+    image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+  },
+  {
+    name: "Solar Water Heating — Residential Development",
+    sector: "Solar" as PortfolioFilter,
+    year: "2023",
+    desc: "Delivered and installed solar heating and domestic hot water systems across 120 villas in a new Muscat residential development, reducing energy costs by 65%.",
+    image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+  },
 ];
 
 const sectorColors: Record<string, { text: string; bg: string }> = {
@@ -1605,12 +2011,22 @@ const sectorColors: Record<string, { text: string; bg: string }> = {
   Industrial: { text: "text-brand-gold", bg: "bg-brand-gold/10" },
   Trading: { text: "text-brand-terracotta", bg: "bg-brand-terracotta/10" },
   Manpower: { text: "text-purple-700", bg: "bg-purple-50" },
+  Seafood: { text: "text-blue-700", bg: "bg-blue-50" },
+  Poultry: { text: "text-amber-700", bg: "bg-amber-50" },
+  Solar: { text: "text-yellow-700", bg: "bg-yellow-50" },
 };
 
-function PortfolioPage({ navigate }: { navigate: (p: Page) => void }) {
+function PortfolioPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const [filter, setFilter] = useState<PortfolioFilter>("All");
   const filters: PortfolioFilter[] = [
     "All",
+    "Solar",
+    "Seafood",
+    "Poultry",
     "Construction",
     "Agriculture",
     "Industrial",
@@ -1624,7 +2040,7 @@ function PortfolioPage({ navigate }: { navigate: (p: Page) => void }) {
     <div>
       <PageHero
         title="Our Portfolio"
-        subtitle="Showcasing completed projects across construction, agriculture, industrial, and trading sectors"
+        subtitle="Showcasing completed projects across solar energy, seafood & poultry, construction, industrial, and trading sectors"
         image="/assets/generated/page-portfolio-hero.dim_1400x600.jpg"
         breadcrumb="Portfolio"
       />
@@ -1712,6 +2128,139 @@ function PortfolioPage({ navigate }: { navigate: (p: Page) => void }) {
               No projects in this category yet.
             </div>
           )}
+        </div>
+      </section>
+
+      {/* ── Upcoming Projects ─────────────────────────────────────────────────── */}
+      <section className="py-16 md:py-24 bg-brand-teal-dark relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(201,168,76,0.3) 30px, rgba(201,168,76,0.3) 32px), repeating-linear-gradient(-45deg, transparent, transparent 30px, rgba(201,168,76,0.3) 30px, rgba(201,168,76,0.3) 32px)",
+          }}
+        />
+        <LogoWatermark size={320} />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3 text-outline">
+              Coming Soon
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-white text-outline">
+              Upcoming Projects
+            </h2>
+            <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
+            <p className="text-white/70 mt-4 max-w-2xl mx-auto text-base leading-relaxed text-outline">
+              Projects currently in planning or execution phase — watch this
+              space for updates.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Large-Scale Solar Farm — South Oman",
+                sector: "Solar",
+                eta: "Q3 2025",
+                desc: "5 MW ground-mounted solar power generation plant with battery energy storage for an industrial client in the South Oman region. Engineering and procurement phase underway.",
+                icon: Zap,
+                color: "text-yellow-400",
+                bg: "bg-yellow-400/10 border-yellow-400/30",
+              },
+              {
+                name: "Salmon & Tuna Cold-Chain Export to EU",
+                sector: "Seafood",
+                eta: "Q4 2025",
+                desc: "Establishing an export pipeline for premium Omani and Indian Ocean salmon and bluefin tuna to European buyers, including compliance with EU food safety standards.",
+                icon: Globe,
+                color: "text-blue-300",
+                bg: "bg-blue-300/10 border-blue-300/30",
+              },
+              {
+                name: "Poultry Processing Facility Partnership",
+                sector: "Poultry",
+                eta: "Q1 2026",
+                desc: "Strategic partnership with a licensed Omani poultry processor to establish a grading, packaging, and cold-storage facility for chicken and egg distribution across the GCC.",
+                icon: Wheat,
+                color: "text-amber-300",
+                bg: "bg-amber-300/10 border-amber-300/30",
+              },
+              {
+                name: "Solar Energy Storage Systems — Commercial Rollout",
+                sector: "Solar",
+                eta: "Q2 2026",
+                desc: "Rollout of modular lithium battery storage systems paired with solar installations across commercial and industrial clients in Muscat and Sohar.",
+                icon: Zap,
+                color: "text-yellow-400",
+                bg: "bg-yellow-400/10 border-yellow-400/30",
+              },
+              {
+                name: "Seafood Distribution Hub — Muscat Port",
+                sector: "Seafood",
+                eta: "Q3 2026",
+                desc: "Development of a dedicated seafood import, grading, and distribution hub at Muscat port to streamline shrimp, squid, and fish supply to hotels, restaurants, and retailers.",
+                icon: Globe,
+                color: "text-blue-300",
+                bg: "bg-blue-300/10 border-blue-300/30",
+              },
+              {
+                name: "Integrated Poultry & Seafood FMCG Export Program",
+                sector: "Poultry",
+                eta: "Q4 2026",
+                desc: "Combined FMCG export program targeting GCC and East African markets — bundling graded chicken, eggs, and certified frozen seafood under a single RAYAT-managed supply chain.",
+                icon: Wheat,
+                color: "text-amber-300",
+                bg: "bg-amber-300/10 border-amber-300/30",
+              },
+            ].map((project, i) => {
+              const Icon = project.icon;
+              return (
+                <motion.div
+                  key={project.name}
+                  data-ocid={`portfolio.upcoming.card.${i + 1}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className={`rounded-2xl p-6 border backdrop-blur-sm ${project.bg} hover:scale-[1.02] transition-transform duration-300`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div
+                      className={`inline-flex items-center gap-2 ${project.color} font-semibold text-xs uppercase tracking-wider`}
+                    >
+                      <Icon size={15} />
+                      {project.sector}
+                    </div>
+                    <span className="bg-brand-gold/20 text-brand-gold text-xs font-bold px-2.5 py-1 rounded-full border border-brand-gold/30">
+                      {project.eta}
+                    </span>
+                  </div>
+                  <h3 className="font-display font-bold text-white text-base leading-snug mb-3 text-outline">
+                    {project.name}
+                  </h3>
+                  <p className="text-white/65 text-sm leading-relaxed">
+                    {project.desc}
+                  </p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-brand-gold/50 rounded-full"
+                        style={{ width: i < 2 ? "60%" : i < 4 ? "35%" : "15%" }}
+                      />
+                    </div>
+                    <span className="text-white/40 text-xs">
+                      {i < 2 ? "In Progress" : i < 4 ? "Planning" : "Scoping"}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -1832,7 +2381,11 @@ const values = [
   },
 ];
 
-function TeamPage({ navigate }: { navigate: (p: Page) => void }) {
+function TeamPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   return (
     <div>
       <PageHero
@@ -2048,7 +2601,11 @@ const newsArticles = [
   },
 ];
 
-function NewsPage({ navigate }: { navigate: (p: Page) => void }) {
+function NewsPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const [email, setEmail] = useState("");
 
   return (
@@ -2213,7 +2770,8 @@ function NewsPage({ navigate }: { navigate: (p: Page) => void }) {
 }
 
 // ─── CONTACT PAGE ──────────────────────────────────────────────────────────────
-function ContactForm() {
+function ContactForm({ lang }: { lang: Lang }) {
+  const t = makeT(lang);
   const { actor } = useActor();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -2253,7 +2811,7 @@ function ContactForm() {
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 border border-border">
       <h3 className="font-display text-xl font-bold text-foreground mb-6">
-        Send Us a Message
+        {t("Send Us a Message", "أرسل لنا رسالة")}
       </h3>
 
       <AnimatePresence mode="wait">
@@ -2269,17 +2827,20 @@ function ContactForm() {
               <ShieldCheck className="text-brand-teal" size={32} />
             </div>
             <h4 className="font-display text-xl font-bold text-foreground mb-2">
-              Message Sent!
+              {t("Message Sent!", "تم إرسال الرسالة!")}
             </h4>
             <p className="text-muted-foreground mb-6">
-              Thank you for reaching out. Our team will contact you shortly.
+              {t(
+                "Thank you for reaching out. Our team will contact you shortly.",
+                "شكراً للتواصل معنا. سيتصل بك فريقنا قريباً.",
+              )}
             </p>
             <button
               type="button"
               onClick={() => setSubmitted(false)}
               className="text-brand-teal font-semibold hover:underline"
             >
-              Send another message
+              {t("Send another message", "إرسال رسالة أخرى")}
             </button>
           </motion.div>
         ) : (
@@ -2294,12 +2855,12 @@ function ContactForm() {
                 htmlFor="contact-name"
                 className="text-sm font-semibold text-foreground mb-1.5 block"
               >
-                Full Name
+                {t("Full Name", "الاسم الكامل")}
               </Label>
               <Input
                 id="contact-name"
                 data-ocid="contact.name.input"
-                placeholder="Your full name"
+                placeholder={t("Your full name", "اسمك الكامل")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -2311,13 +2872,13 @@ function ContactForm() {
                 htmlFor="contact-email"
                 className="text-sm font-semibold text-foreground mb-1.5 block"
               >
-                Email Address
+                {t("Email Address", "البريد الإلكتروني")}
               </Label>
               <Input
                 id="contact-email"
                 data-ocid="contact.email.input"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t("you@example.com", "بريدك@مثال.com")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -2329,12 +2890,12 @@ function ContactForm() {
                 htmlFor="contact-message"
                 className="text-sm font-semibold text-foreground mb-1.5 block"
               >
-                Message
+                {t("Message", "الرسالة")}
               </Label>
               <Textarea
                 id="contact-message"
                 data-ocid="contact.message.textarea"
-                placeholder="How can we help you?"
+                placeholder={t("How can we help you?", "كيف يمكننا مساعدتك؟")}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
@@ -2360,11 +2921,11 @@ function ContactForm() {
             >
               {mutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                  {t("Sending...", "جارٍ الإرسال...")}
                 </>
               ) : (
-                "Send Message"
+                t("Send Message", "إرسال الرسالة")
               )}
             </Button>
           </motion.form>
@@ -2374,11 +2935,12 @@ function ContactForm() {
   );
 }
 
-function ContactPage() {
+function ContactPage({ lang }: { lang: Lang }) {
+  const t = makeT(lang);
   return (
     <div>
       {/* Hero */}
-      <section className="relative min-h-[300px] flex items-center justify-center overflow-hidden pt-20 md:pt-24 bg-brand-teal">
+      <section className="relative min-h-[350px] flex items-center justify-center overflow-hidden bg-brand-teal">
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -2388,21 +2950,23 @@ function ContactPage() {
           }}
         />
         <LogoWatermark size={240} />
-        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center py-16">
+        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center py-16 pt-32 md:pt-36">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
             <p className="text-brand-gold font-medium text-sm tracking-widest uppercase mb-3">
-              RAYAT Industries Trading SPC / Contact
+              RAYAT Industries Trading SPC / {t("Contact", "تواصل")}
             </p>
             <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl mb-4 text-shadow-lg">
-              Get In Touch
+              {t("Get In Touch", "تواصل معنا")}
             </h1>
             <p className="text-white/80 text-lg leading-relaxed">
-              We're here to help. Reach out to discuss requirements, request a
-              quote, or simply learn more about RAYAT.
+              {t(
+                "We're here to help. Reach out to discuss requirements, request a quote, or simply learn more about RAYAT.",
+                "نحن هنا للمساعدة. تواصل معنا لمناقشة المتطلبات أو طلب عرض أسعار أو معرفة المزيد عن رايات.",
+              )}
             </p>
           </motion.div>
         </div>
@@ -2429,7 +2993,7 @@ function ContactPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <ContactForm />
+              <ContactForm lang={lang} />
             </motion.div>
 
             {/* Info panel */}
@@ -2441,31 +3005,45 @@ function ContactPage() {
             >
               <div className="bg-brand-teal rounded-2xl p-8 text-white shadow-lg">
                 <h3 className="font-display text-xl font-bold mb-6">
-                  Contact Information
+                  {t("Contact Information", "معلومات التواصل")}
                 </h3>
                 <div className="space-y-5">
                   {[
                     {
                       icon: MapPin,
-                      label: "Address",
-                      content: "Muscat, Sultanate of Oman",
+                      label: t("Address", "العنوان"),
+                      content: t(
+                        "Way 4521, Building 3, Al Ghubra North, Muscat 133, Sultanate of Oman",
+                        "طريق 4521، مبنى 3، الغبرة شمال، مسقط 133، سلطنة عُمان",
+                      ),
+                      href: undefined as string | undefined,
                     },
                     {
                       icon: Mail,
-                      label: "Email",
+                      label: t("Email", "البريد الإلكتروني"),
                       content: "info@rayatindustries.com",
                       href: "mailto:info@rayatindustries.com",
                     },
                     {
                       icon: Phone,
-                      label: "Phone",
+                      label: t("Phone", "الهاتف"),
                       content: "+968 2400 0000",
                       href: "tel:+96824000000",
                     },
                     {
+                      icon: MessageCircle,
+                      label: t("WhatsApp", "واتساب"),
+                      content: "+968 2400 0000",
+                      href: "https://wa.me/96824000000",
+                    },
+                    {
                       icon: Clock,
-                      label: "Office Hours",
-                      content: "Sunday–Thursday, 8:00 AM – 5:00 PM",
+                      label: t("Office Hours", "ساعات العمل"),
+                      content: t(
+                        "Sunday–Thursday, 8:00 AM – 5:00 PM",
+                        "الأحد–الخميس، 8:00 ص – 5:00 م",
+                      ),
+                      href: undefined as string | undefined,
                     },
                   ].map(({ icon: Icon, label, content, href }) => (
                     <div key={label} className="flex items-start gap-4">
@@ -2479,8 +3057,16 @@ function ContactPage() {
                         {href ? (
                           <a
                             href={href}
-                            data-ocid={`contact.${label.toLowerCase()}.link`}
+                            data-ocid={`contact.${label.toLowerCase().replace(/\s+/g, "_")}.link`}
                             className="text-white hover:text-brand-gold transition-colors"
+                            target={
+                              href.startsWith("http") ? "_blank" : undefined
+                            }
+                            rel={
+                              href.startsWith("http")
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
                           >
                             {content}
                           </a>
@@ -2497,39 +3083,44 @@ function ContactPage() {
               <div className="bg-white rounded-2xl p-6 border border-border shadow-sm">
                 <h4 className="font-display font-bold text-foreground mb-3 flex items-center gap-2">
                   <FileText className="text-brand-teal" size={18} />
-                  Company Registration
+                  {t("Company Registration", "تسجيل الشركة")}
                 </h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    Registered with the Ministry of Commerce, Industry and
-                    Investment Promotion, Sultanate of Oman
+                    {t(
+                      "Registered with the Ministry of Commerce, Industry and Investment Promotion, Sultanate of Oman",
+                      "مسجلة لدى وزارة التجارة والصناعة وترويج الاستثمار، سلطنة عُمان",
+                    )}
                   </p>
                   <p>
                     <span className="font-semibold text-foreground">
-                      CR No.:
+                      {t("CR No.:", "رقم السجل التجاري:")}
                     </span>{" "}
                     Oman CR Registration
                   </p>
                   <p>
                     <span className="font-semibold text-foreground">
-                      LMRA Licensed:
+                      {t("LMRA Licensed:", "مرخص من هيئة سوق العمل:")}
                     </span>{" "}
-                    Labour & Manpower Recruitment
+                    {t(
+                      "Labour & Manpower Recruitment",
+                      "توظيف العمالة والقوى البشرية",
+                    )}
                   </p>
                 </div>
               </div>
 
               {/* Map */}
-              <div className="bg-white rounded-2xl shadow-lg border border-border overflow-hidden flex-1 min-h-[220px] relative">
+              <div className="bg-white rounded-2xl shadow-lg border border-border overflow-hidden flex-1 min-h-[280px] relative">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57880.1!2d58.3829!3d23.5880!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e91ffd577328f09%3A0x7c65a75db44f1e2f!2sMuscat%2C%20Oman!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14631.5!2d58.3700!3d23.5950!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e91fce5d2ae3deb%3A0x6a2a4fe88c71ee4a!2sAl+Ghubra+North%2C+Muscat%2C+Oman!5e0!3m2!1sen!2s!4v1700000000001!5m2!1sen!2s"
                   width="100%"
-                  height="220"
+                  height="280"
                   className="border-0 w-full"
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="RAYAT Industries Location - Muscat, Oman"
+                  title="RAYAT Industries Location - Al Ghubra North, Muscat, Oman"
                 />
               </div>
             </motion.div>
@@ -2541,8 +3132,22 @@ function ContactPage() {
 }
 
 // ─── TRADING DIVISIONS OVERVIEW PAGE ─────────────────────────────────────────
-function TradingDivisionsPage({ navigate }: { navigate: (p: Page) => void }) {
+function TradingDivisionsPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const divisions = [
+    {
+      title: "Solar Division",
+      description:
+        "Oman's trusted solar energy trading partner — solar panels, complete PV systems, energy storage, solar heating, and all components for clean energy projects.",
+      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+      icon: Zap,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      page: "solar" as Page,
+    },
     {
       title: "FMCG Division",
       description:
@@ -2610,18 +3215,18 @@ function TradingDivisionsPage({ navigate }: { navigate: (p: Page) => void }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
               About Our Trading Operations
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
               Delivering Excellence in Every Trade
             </h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5">
-              RAYAT Industries Trading SPC is a diversified trading conglomerate
-              with deep roots in the Gulf region. Founded with the vision of
-              bridging global markets with local expertise, we have grown to
-              become a trusted name across FMCG, Networking infrastructure, and
-              Construction materials.
+              RAYAT Industries is a diversified trading conglomerate with deep
+              roots in the Gulf region. Founded with the vision of bridging
+              global markets with local expertise, we have grown to become a
+              trusted name across Solar Energy, FMCG (Seafood &amp; Poultry),
+              Networking infrastructure, and Construction materials.
             </p>
             <p className="text-muted-foreground text-base leading-relaxed">
               Founded in Oman with a vision to reshape Gulf commerce. Building
@@ -2760,8 +3365,19 @@ function TradingDivisionsPage({ navigate }: { navigate: (p: Page) => void }) {
 }
 
 // ─── FMCG DIVISION PAGE ────────────────────────────────────────────────────────
-function FMCGPage({ navigate }: { navigate: (p: Page) => void }) {
+function FMCGPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const productCategories = [
+    {
+      icon: Star,
+      title: "Seafood & Poultry",
+      desc: "Premium fresh and frozen seafood: Shrimp, Tuna, Salmon, Mackerel, Squid, Cuttlefish, Mussels, Clams. Plus Poultry: Whole Chicken (1000g, 800g, 1100g sizes), Eggs.",
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+    },
     {
       icon: Wheat,
       title: "Food & Staples",
@@ -2831,7 +3447,7 @@ function FMCGPage({ navigate }: { navigate: (p: Page) => void }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Division Overview
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -2894,8 +3510,110 @@ function FMCGPage({ navigate }: { navigate: (p: Page) => void }) {
         </div>
       </section>
 
+      {/* Seafood & Poultry Featured Section */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
+              Featured Sector
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Seafood &amp; Poultry
+            </h2>
+            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+              Our major focus area — supplying premium quality seafood and
+              poultry products across Oman and the Gulf.
+            </p>
+            <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Seafood */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-brand-sand rounded-2xl p-8 border border-border"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Star size={20} className="text-blue-700" />
+                </div>
+                <h3 className="font-display font-bold text-foreground text-xl">
+                  Seafood
+                </h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Shrimp",
+                  "Tuna",
+                  "Salmon",
+                  "Mackerel",
+                  "Squid",
+                  "Cuttlefish",
+                  "Mussels",
+                  "Clams",
+                ].map((item) => (
+                  <span
+                    key={item}
+                    className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-full text-sm font-medium"
+                  >
+                    <BadgeCheck size={13} /> {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Poultry */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-brand-sand rounded-2xl p-8 border border-border"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                  <Wheat size={20} className="text-amber-700" />
+                </div>
+                <h3 className="font-display font-bold text-foreground text-xl">
+                  Poultry
+                </h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Chicken — 800g",
+                  "Chicken — 1000g",
+                  "Chicken — 1100g",
+                  "Eggs",
+                ].map((item) => (
+                  <span
+                    key={item}
+                    className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1.5 rounded-full text-sm font-medium"
+                  >
+                    <BadgeCheck size={13} /> {item}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="mt-8 rounded-2xl overflow-hidden shadow-lg">
+            <img
+              src="/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg"
+              alt="Seafood and Poultry Products"
+              className="w-full object-cover max-h-64"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Product Categories */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-brand-sand">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -3046,7 +3764,11 @@ function FMCGPage({ navigate }: { navigate: (p: Page) => void }) {
 }
 
 // ─── NETWORKING DIVISION PAGE ──────────────────────────────────────────────────
-function NetworkingPage({ navigate }: { navigate: (p: Page) => void }) {
+function NetworkingPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const productLines = [
     {
       icon: Server,
@@ -3118,7 +3840,7 @@ function NetworkingPage({ navigate }: { navigate: (p: Page) => void }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Division Overview
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -3322,7 +4044,9 @@ function NetworkingPage({ navigate }: { navigate: (p: Page) => void }) {
 // ─── CONSTRUCTION MATERIALS PAGE ───────────────────────────────────────────────
 function ConstructionMaterialsPage({
   navigate,
-}: { navigate: (p: Page) => void }) {
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const materials = [
     {
       title: "Steel Products",
@@ -3390,7 +4114,7 @@ function ConstructionMaterialsPage({
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Division Overview
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -3568,7 +4292,11 @@ function ConstructionMaterialsPage({
 }
 
 // ─── SAFETY & PPE / METALS PAGE ────────────────────────────────────────────────
-function SafetyPPEPage({ navigate }: { navigate: (p: Page) => void }) {
+function SafetyPPEPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
   const ppeCategories = [
     {
       icon: HardHat,
@@ -3646,7 +4374,7 @@ function SafetyPPEPage({ navigate }: { navigate: (p: Page) => void }) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-l-4 border-brand-gold pl-3">
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
                 Division Overview
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
@@ -3812,20 +4540,260 @@ function SafetyPPEPage({ navigate }: { navigate: (p: Page) => void }) {
   );
 }
 
+// ─── SOLAR DIVISION PAGE ──────────────────────────────────────────────────────
+function SolarDivisionPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
+  const products = [
+    {
+      icon: Zap,
+      title: "Solar Power Generation",
+      desc: "Complete solar photovoltaic (PV) systems for residential, commercial, and industrial power generation. Monocrystalline and polycrystalline panels from top-tier manufacturers.",
+      color: "text-yellow-700",
+      bg: "bg-yellow-50",
+    },
+    {
+      icon: Wind,
+      title: "Solar Power Systems",
+      desc: "End-to-end solar power system design and supply: grid-tied, off-grid, and hybrid systems. Inverters, charge controllers, mounting structures, and complete turnkey packages.",
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+    },
+    {
+      icon: Package,
+      title: "Energy Storage & Conversion",
+      desc: "Battery energy storage systems (BESS), lithium-ion and lead-acid battery banks, DC-AC inverters, UPS systems, and power conversion equipment for reliable energy management.",
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+    },
+    {
+      icon: Layers,
+      title: "Solar Heating & Water Systems",
+      desc: "Solar water heaters, solar pool heating, solar thermal collectors, and complete solar hot water solutions for residential, commercial, and industrial applications.",
+      color: "text-orange-700",
+      bg: "bg-orange-50",
+    },
+    {
+      icon: Star,
+      title: "Components & Accessories",
+      desc: "Solar cables, MC4 connectors, combiner boxes, surge protection devices, monitoring systems, junction boxes, and all accessories for a complete solar installation.",
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+    },
+  ];
+
+  return (
+    <div>
+      <PageHero
+        title="Solar Division"
+        subtitle="Renewable Energy Solutions for Oman & the Gulf — Solar Power, Storage & Heating Systems"
+        image="/assets/generated/division-solar-hero.dim_1400x600.jpg"
+        breadcrumb="Solar Division"
+      />
+
+      {/* Intro */}
+      <section className="py-16 md:py-24 bg-brand-sand">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
+                Division Overview
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
+                Oman's Solar Energy Trading Partner
+              </h2>
+              <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5">
+                RAYAT's Solar Division is at the forefront of Oman's transition
+                to clean, renewable energy. We supply solar panels, complete
+                power systems, energy storage solutions, and heating systems to
+                contractors, developers, and businesses across Oman and the Gulf
+                — aligned with Oman Vision 2040's sustainability goals.
+              </p>
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                From rooftop solar installations to large-scale solar farms, we
+                provide high-quality products from globally certified
+                manufacturers with competitive pricing and full technical
+                support.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  data-ocid="solar.contact.primary_button"
+                  onClick={() => navigate("contact")}
+                  className="inline-flex items-center justify-center gap-2 bg-brand-teal text-white font-bold px-6 py-3 rounded-lg hover:bg-brand-teal-dark transition-colors"
+                >
+                  Solar Enquiry <ChevronRight size={16} />
+                </button>
+                <button
+                  type="button"
+                  data-ocid="solar.trading.secondary_button"
+                  onClick={() => navigate("trading-divisions")}
+                  className="inline-flex items-center justify-center gap-2 border-2 border-brand-teal text-brand-teal font-bold px-6 py-3 rounded-lg hover:bg-brand-teal hover:text-white transition-all"
+                >
+                  All Divisions
+                </button>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src="/assets/generated/division-solar-hero.dim_1400x600.jpg"
+                  alt="Solar Division"
+                  className="w-full h-auto object-cover aspect-[4/3]"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-brand-teal text-white px-5 py-3 rounded-xl shadow-xl">
+                <div className="font-display text-xl font-extrabold">100%</div>
+                <div className="text-xs opacity-80">Clean Energy</div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Products */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
+              What We Supply
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Solar Product Categories
+            </h2>
+            <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((prod, i) => {
+              const Icon = prod.icon;
+              return (
+                <motion.div
+                  key={prod.title}
+                  data-ocid={`solar.product.card.${i + 1}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-border transition-shadow duration-300"
+                >
+                  <div
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${prod.bg} ${prod.color} mb-4`}
+                  >
+                    <Icon size={22} />
+                  </div>
+                  <h3 className="font-display font-bold text-foreground text-lg mb-2">
+                    {prod.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {prod.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Solar RAYAT */}
+      <section className="py-14 bg-brand-teal relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 30% 50%, white 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-6">
+              Why Choose RAYAT Solar?
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {[
+                "Aligned with Oman Vision 2040 renewable energy targets",
+                "Globally certified solar products from top manufacturers",
+                "Complete supply chain from panels to installation accessories",
+                "Competitive pricing with full technical support across the Gulf",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 text-left bg-white/10 rounded-xl p-4 border border-white/15"
+                >
+                  <BadgeCheck
+                    className="text-brand-gold flex-shrink-0 mt-0.5"
+                    size={18}
+                  />
+                  <p className="text-white/90 text-sm leading-relaxed">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              data-ocid="solar.enquiry.primary_button"
+              onClick={() => navigate("contact")}
+              className="inline-flex items-center gap-2 bg-brand-gold text-gray-900 font-bold px-8 py-4 rounded-lg hover:opacity-90 transition-opacity shadow-lg"
+            >
+              Solar Enquiry <ChevronRight size={18} />
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // ─── Footer ────────────────────────────────────────────────────────────────────
-function Footer({ navigate }: { navigate: (p: Page) => void }) {
-  const year = new Date().getFullYear();
+function Footer({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  const t = makeT(lang);
+  const year = 2017;
 
   const footerLinks: { label: string; page: Page }[] = [
-    { label: "Home", page: "home" },
-    { label: "Portfolio", page: "portfolio" },
-    { label: "Services", page: "services" },
-    { label: "Contact", page: "contact" },
-    { label: "Trading Divisions", page: "trading-divisions" },
-    { label: "FMCG Division", page: "fmcg" },
-    { label: "Networking Division", page: "networking" },
-    { label: "Construction Materials", page: "construction-materials" },
-    { label: "Safety & PPE / Metals", page: "safety-ppe" },
+    { label: t("Home", "الرئيسية"), page: "home" },
+    { label: t("Portfolio", "المحفظة"), page: "portfolio" },
+    { label: t("Services", "الخدمات"), page: "services" },
+    { label: t("Contact", "تواصل"), page: "contact" },
+    {
+      label: t("Trading Divisions", "أقسام التداول"),
+      page: "trading-divisions",
+    },
+    { label: t("Solar Division", "قسم الطاقة الشمسية"), page: "solar" },
+    { label: t("FMCG Division", "قسم السلع الاستهلاكية"), page: "fmcg" },
+    { label: t("Networking Division", "قسم الشبكات"), page: "networking" },
+    {
+      label: t("Construction Materials", "مواد البناء"),
+      page: "construction-materials",
+    },
+    {
+      label: t("Safety & PPE / Metals", "السلامة والمعادن"),
+      page: "safety-ppe",
+    },
   ];
 
   return (
@@ -3849,14 +4817,17 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
               رايات للصناعات والتجارة
             </p>
             <p className="text-white/60 text-sm mt-3 leading-relaxed">
-              A trusted Omani partner for industrial growth and global trade.
+              {t(
+                "A trusted Omani partner for industrial growth and global trade.",
+                "شريك عُماني موثوق للنمو الصناعي والتجارة العالمية.",
+              )}
             </p>
           </div>
 
           {/* Quick links */}
           <div>
             <h4 className="font-bold text-white mb-4 text-sm tracking-widest uppercase">
-              Quick Links
+              {t("Quick Links", "روابط سريعة")}
             </h4>
             <ul className="space-y-2">
               {footerLinks.map((link) => (
@@ -3880,12 +4851,20 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
           {/* Contact summary */}
           <div>
             <h4 className="font-bold text-white mb-4 text-sm tracking-widest uppercase">
-              Contact
+              {t("Contact", "تواصل")}
             </h4>
             <div className="space-y-2 text-sm text-white/70">
-              <p className="flex items-center gap-2">
-                <MapPin size={14} className="flex-shrink-0 text-brand-gold" />
-                Muscat, Sultanate of Oman
+              <p className="flex items-start gap-2">
+                <MapPin
+                  size={14}
+                  className="flex-shrink-0 text-brand-gold mt-0.5"
+                />
+                <span>
+                  {t(
+                    "Way 4521, Building 3, Al Ghubra North, Muscat 133, Oman",
+                    "طريق 4521، مبنى 3، الغبرة شمال، مسقط 133، عُمان",
+                  )}
+                </span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail size={14} className="flex-shrink-0 text-brand-gold" />
@@ -3906,15 +4885,35 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
                 </a>
               </p>
               <p className="flex items-center gap-2">
+                <MessageCircle
+                  size={14}
+                  className="flex-shrink-0 text-brand-gold"
+                />
+                <a
+                  href="https://wa.me/96824000000"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  {t("WhatsApp: +968 2400 0000", "واتساب: +968 2400 0000")}
+                </a>
+              </p>
+              <p className="flex items-center gap-2">
                 <Clock size={14} className="flex-shrink-0 text-brand-gold" />
-                Sun–Thu, 8:00 AM – 5:00 PM
+                {t(
+                  "Sun–Thu, 8:00 AM – 5:00 PM",
+                  "الأحد–الخميس، 8:00 ص – 5:00 م",
+                )}
               </p>
             </div>
           </div>
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
-          <p>© {year} RAYAT Industries Trading SPC. All rights reserved.</p>
+          <p>
+            © {year} RAYAT Industries Trading SPC.{" "}
+            {t("All rights reserved.", "جميع الحقوق محفوظة.")}
+          </p>
         </div>
       </div>
     </footer>
@@ -3924,18 +4923,26 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
 // ─── App Root ──────────────────────────────────────────────────────────────────
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [lang, setLang] = useState<Lang>("en");
 
   function navigate(page: Page) {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  // Scroll to top on page change — handled in navigate(), no effect needed
-
   return (
-    <div className="min-h-screen">
+    <div
+      className="min-h-screen"
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      lang={lang}
+    >
       <Toaster richColors position="top-right" />
-      <Navbar currentPage={currentPage} setCurrentPage={navigate} />
+      <Navbar
+        currentPage={currentPage}
+        setCurrentPage={navigate}
+        lang={lang}
+        setLang={setLang}
+      />
       <main>
         <AnimatePresence mode="wait">
           <motion.div
@@ -3945,32 +4952,61 @@ export default function App() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
           >
-            {currentPage === "home" && <HomePage navigate={navigate} />}
-            {currentPage === "labour" && <LabourPage navigate={navigate} />}
-            {currentPage === "services" && <ServicesPage navigate={navigate} />}
+            {currentPage === "home" && (
+              <HomePage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "labour" && (
+              <LabourPage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "services" && (
+              <ServicesPage navigate={navigate} lang={lang} />
+            )}
             {currentPage === "portfolio" && (
-              <PortfolioPage navigate={navigate} />
+              <PortfolioPage navigate={navigate} lang={lang} />
             )}
-            {currentPage === "team" && <TeamPage navigate={navigate} />}
-            {currentPage === "news" && <NewsPage navigate={navigate} />}
-            {currentPage === "contact" && <ContactPage />}
+            {currentPage === "team" && (
+              <TeamPage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "news" && (
+              <NewsPage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "contact" && <ContactPage lang={lang} />}
             {currentPage === "trading-divisions" && (
-              <TradingDivisionsPage navigate={navigate} />
+              <TradingDivisionsPage navigate={navigate} lang={lang} />
             )}
-            {currentPage === "fmcg" && <FMCGPage navigate={navigate} />}
+            {currentPage === "fmcg" && (
+              <FMCGPage navigate={navigate} lang={lang} />
+            )}
             {currentPage === "networking" && (
-              <NetworkingPage navigate={navigate} />
+              <NetworkingPage navigate={navigate} lang={lang} />
             )}
             {currentPage === "construction-materials" && (
-              <ConstructionMaterialsPage navigate={navigate} />
+              <ConstructionMaterialsPage navigate={navigate} lang={lang} />
             )}
             {currentPage === "safety-ppe" && (
-              <SafetyPPEPage navigate={navigate} />
+              <SafetyPPEPage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "solar" && (
+              <SolarDivisionPage navigate={navigate} lang={lang} />
             )}
           </motion.div>
         </AnimatePresence>
       </main>
-      <Footer navigate={navigate} />
+      <Footer navigate={navigate} lang={lang} />
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/96824000000"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-ocid="whatsapp.floating.button"
+        className="fixed bottom-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-2xl transition-all duration-300 hover:scale-110 flex items-center gap-2 ltr:right-6 rtl:left-6"
+        aria-label={
+          lang === "ar" ? "تواصل معنا عبر واتساب" : "Contact us on WhatsApp"
+        }
+      >
+        <MessageCircle size={24} />
+      </a>
     </div>
   );
 }
