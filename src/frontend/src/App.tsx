@@ -7,12 +7,9 @@ import { useActor } from "@/hooks/useActor";
 import { useMutation } from "@tanstack/react-query";
 import {
   ArrowRight,
-  Award,
   BadgeCheck,
-  BookOpen,
   Briefcase,
   Building2,
-  Calendar,
   ChevronDown,
   ChevronRight,
   Clock,
@@ -100,7 +97,7 @@ function PageHero({
   breadcrumb: string;
 }) {
   return (
-    <section className="relative min-h-[340px] md:min-h-[420px] flex items-center justify-center overflow-hidden pt-16 md:pt-20">
+    <section className="relative min-h-[340px] md:min-h-[420px] flex items-center justify-center overflow-hidden pt-20 md:pt-24">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${image}')` }}
@@ -113,7 +110,7 @@ function PageHero({
             "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.07) 20px, rgba(255,255,255,0.07) 40px)",
         }}
       />
-      <LogoWatermark size={260} />
+      <LogoWatermark size={340} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16">
         <motion.div
@@ -176,11 +173,8 @@ function Navbar({
 
   const navLinks: { label: string; page: Page }[] = [
     { label: "Home", page: "home" },
-    { label: "Services", page: "services" },
-    { label: "Labour & Manpower", page: "labour" },
     { label: "Portfolio", page: "portfolio" },
-    { label: "Our Team", page: "team" },
-    { label: "News", page: "news" },
+    { label: "Services", page: "services" },
   ];
 
   const tradingSubLinks: { label: string; page: Page }[] = [
@@ -201,7 +195,7 @@ function Navbar({
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-brand-sand-gold shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo + Name */}
           <button
             type="button"
@@ -212,8 +206,8 @@ function Navbar({
             <img
               src="/assets/generated/rayat-logo-transparent.dim_400x400-transparent.png"
               alt="RAYAT Industries Trading SPC Logo"
-              className="h-10 md:h-13 w-auto object-contain flex-shrink-0"
-              style={{ height: "52px" }}
+              className="w-auto object-contain flex-shrink-0"
+              style={{ height: "72px" }}
             />
             <span className="text-brand-teal-dark font-bold text-sm md:text-base lg:text-lg leading-tight tracking-wide font-display">
               RAYAT Industries Trading SPC
@@ -404,8 +398,9 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
   return (
     <section
       id="hero"
-      className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-16 md:pt-20"
+      className="relative min-h-[85vh] flex items-center justify-center overflow-hidden pt-20 md:pt-24"
     >
+      {/* Static image fallback */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -413,6 +408,21 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
             "url('/assets/generated/hero-banner.dim_1400x600.jpg')",
         }}
       />
+      {/* Video background overlay */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        className="absolute inset-0 w-full h-full object-cover"
+        poster="/assets/generated/hero-banner.dim_1400x600.jpg"
+      >
+        <source
+          src="https://videos.pexels.com/video-files/852395/852395-hd_1920_1080_25fps.mp4"
+          type="video/mp4"
+        />
+      </video>
       <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/90 via-brand-teal/75 to-brand-teal-dark/85" />
       <div
         className="absolute inset-0 opacity-10"
@@ -421,7 +431,7 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
             "repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.05) 20px, rgba(255,255,255,0.05) 40px)",
         }}
       />
-      <LogoWatermark size={360} />
+      <LogoWatermark size={480} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
         <motion.div
@@ -430,16 +440,26 @@ function HeroSection({ navigate }: { navigate: (p: Page) => void }) {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <p
-            className="text-brand-gold font-semibold text-xl md:text-2xl mb-3 tracking-widest text-shadow-md"
+            className="text-brand-gold font-semibold text-2xl md:text-3xl mb-3 tracking-widest"
             dir="rtl"
+            style={{ textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}
           >
             رايات للصناعات والتجارة
           </p>
-          <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight mb-6 text-shadow-lg">
+          <h1
+            className="font-display text-white font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight mb-6"
+            style={{
+              textShadow:
+                "0 4px 24px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4)",
+            }}
+          >
             RAYAT Industries Trading SPC
           </h1>
-          <p className="text-white/85 text-lg md:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto leading-relaxed text-shadow-md">
-            Building Bahrain's Future Through Industrial Excellence &amp; Global
+          <p
+            className="text-white/85 text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.35)" }}
+          >
+            Building Oman's Future Through Industrial Excellence &amp; Global
             Trade
           </p>
 
@@ -493,7 +513,7 @@ function AboutSection() {
     { value: "10+", label: "Years Experience" },
     { value: "4+", label: "Industry Sectors" },
     { value: "50+", label: "Trusted Partners" },
-    { value: "100%", label: "Bahraini Owned" },
+    { value: "100%", label: "Omani Owned" },
   ];
 
   return (
@@ -513,17 +533,17 @@ function AboutSection() {
               About RAYAT Industries Trading SPC
             </h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-6">
-              RAYAT Industries Trading SPC is a dynamic Bahraini company
-              committed to driving industrial growth and facilitating global
-              trade across the Kingdom. Founded on principles of integrity,
-              quality, and innovation, we serve as a trusted partner for
-              businesses across construction, agriculture, general trading,
-              industrial supply, and labour & manpower sectors.
+              RAYAT Industries Trading SPC is a dynamic Omani company committed
+              to driving industrial growth and facilitating global trade across
+              the Sultanate. Founded on principles of integrity, quality, and
+              innovation, we serve as a trusted partner for businesses across
+              construction, agriculture, general trading, and industrial supply
+              sectors.
             </p>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-10">
               Our deep market knowledge and strong supplier networks allow us to
-              deliver reliable solutions that meet the evolving needs of
-              Bahrain's growing economy.
+              deliver reliable solutions that meet the evolving needs of Oman's
+              growing economy.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -554,19 +574,27 @@ function AboutSection() {
             transition={{ duration: 0.7 }}
             className="relative"
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src="/assets/generated/about-us.dim_800x600.jpg"
-                alt="RAYAT Industries team meeting"
-                className="w-full h-auto object-cover aspect-[4/3]"
-              />
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster="/assets/generated/about-dock-crane.dim_800x600.jpg"
+                className="w-full h-full object-cover"
+              >
+                <source
+                  src="https://videos.pexels.com/video-files/4839014/4839014-uhd_2560_1440_25fps.mp4"
+                  type="video/mp4"
+                />
+                <img
+                  src="/assets/generated/about-dock-crane.dim_800x600.jpg"
+                  alt="Shipping containers being unloaded at a port with large cranes"
+                  className="w-full h-full object-cover"
+                />
+              </video>
               <div className="absolute inset-0 rounded-2xl ring-4 ring-brand-gold/30 pointer-events-none" />
-            </div>
-            <div className="absolute -bottom-4 -left-4 bg-brand-teal text-white px-5 py-3 rounded-xl shadow-xl">
-              <div className="text-xs font-medium opacity-80">
-                Established in
-              </div>
-              <div className="font-display text-xl font-extrabold">Bahrain</div>
             </div>
           </motion.div>
         </div>
@@ -579,7 +607,7 @@ const sectors = [
   {
     title: "Construction & Infrastructure",
     description:
-      "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Bahrain and the GCC.",
+      "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Oman and the GCC.",
     image: "/assets/generated/sector-construction.dim_600x400.jpg",
     icon: Building2,
     color: "text-brand-teal",
@@ -589,7 +617,7 @@ const sectors = [
   {
     title: "Agriculture & Food Trading",
     description:
-      "From grain and fresh produce to agricultural inputs, we connect Bahraini businesses with reliable global food supply chains.",
+      "From grain and fresh produce to agricultural inputs, we connect Omani businesses with reliable global food supply chains.",
     image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
     icon: Wheat,
     color: "text-green-700",
@@ -658,10 +686,10 @@ function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 + 0.1 }}
-                whileHover={{ y: -6 }}
+                transition={{ delay: i * 0.1 + 0.1, duration: 0.25 }}
+                whileHover={{ y: -8, scale: 1.03 }}
                 onClick={() => navigate(sector.page)}
-                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-border transition-all duration-300 text-left w-full cursor-pointer"
+                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl hover:border-brand-teal border border-border transition-all duration-300 text-left w-full cursor-pointer"
               >
                 <div className="relative overflow-hidden h-44">
                   <img
@@ -678,7 +706,7 @@ function SectorsSection({ navigate }: { navigate: (p: Page) => void }) {
                     <Icon size={16} />
                     <span className="text-xs font-semibold">Sector</span>
                   </div>
-                  <h3 className="font-display font-bold text-foreground text-base mb-2 leading-snug">
+                  <h3 className="font-display font-bold text-brand-teal-dark text-lg mb-2 leading-snug">
                     {sector.title}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
@@ -706,7 +734,7 @@ const features = [
     icon: MapPin,
     title: "Local Expertise",
     description:
-      "Deep understanding of Bahrain's market, regulations, and business culture",
+      "Deep understanding of Oman's market, regulations, and business culture",
     accent: "bg-brand-gold/10 text-brand-gold",
   },
   {
@@ -731,6 +759,19 @@ function WhyUsSection() {
       id="why-us"
       className="py-20 md:py-28 bg-brand-teal relative overflow-hidden"
     >
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="none"
+        className="absolute inset-0 w-full h-full object-cover opacity-15"
+      >
+        <source
+          src="https://videos.pexels.com/video-files/5528018/5528018-hd_1920_1080_30fps.mp4"
+          type="video/mp4"
+        />
+      </video>
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -804,9 +845,8 @@ function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
             Ready to Work With Us?
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-            Whether you need industrial supplies, manpower solutions, or general
-            trading services — we're here to help. Contact our team for a prompt
-            response.
+            Whether you need industrial supplies or general trading services —
+            we're here to help. Contact our team for a prompt response.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -817,15 +857,6 @@ function HomeContactCTA({ navigate }: { navigate: (p: Page) => void }) {
             >
               <Mail size={18} />
               Get In Touch
-            </button>
-            <button
-              type="button"
-              data-ocid="home.labour_cta.secondary_button"
-              onClick={() => navigate("labour")}
-              className="inline-flex items-center justify-center gap-2 border-2 border-brand-teal text-brand-teal font-bold px-8 py-4 rounded-lg hover:bg-brand-teal hover:text-white transition-all text-base"
-            >
-              <Users size={18} />
-              Labour & Manpower
             </button>
           </div>
         </motion.div>
@@ -920,7 +951,7 @@ function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
     <div>
       <PageHero
         title="Labour & Manpower Solutions"
-        subtitle="Comprehensive workforce supply and recruitment services for businesses across Bahrain and the GCC"
+        subtitle="Comprehensive workforce supply and recruitment services for businesses across Oman and the GCC"
         image="/assets/generated/page-manpower-hero.dim_1400x600.jpg"
         breadcrumb="Labour & Manpower"
       />
@@ -938,11 +969,11 @@ function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
                 Workforce Solutions
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
-                Your Trusted Manpower Partner in Bahrain
+                Your Trusted Manpower Partner in Oman
               </h2>
               <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5">
                 RAYAT provides comprehensive manpower supply solutions for
-                businesses in Bahrain and the GCC. From unskilled construction
+                businesses in Oman and the GCC. From unskilled construction
                 laborers to highly skilled technical professionals, we connect
                 employers with the right talent efficiently and compliantly.
               </p>
@@ -1107,8 +1138,8 @@ function LabourPage({ navigate }: { navigate: (p: Page) => void }) {
               </h2>
               <p className="text-muted-foreground text-base leading-relaxed mb-6">
                 We handle all the complex paperwork so you don't have to. Our
-                documentation team is fully versed in Bahraini labour law and
-                LMRA requirements.
+                documentation team is fully versed in Omani labour law and Oman
+                Labor Law requirements.
               </p>
               <ul className="space-y-3">
                 {[
@@ -1214,7 +1245,7 @@ const services = [
     color: "text-brand-teal",
     bg: "bg-brand-teal/10",
     summary:
-      "Premium construction materials, heavy equipment, and project support for Bahrain's development projects.",
+      "Premium construction materials, heavy equipment, and project support for Oman's development projects.",
     details: [
       "Structural steel, rebar, and metal works",
       "Cement, aggregates, and ready-mix concrete",
@@ -1229,7 +1260,7 @@ const services = [
     color: "text-green-700",
     bg: "bg-green-50",
     summary:
-      "Global sourcing of grains, fresh produce, and agricultural inputs to food businesses in Bahrain and GCC.",
+      "Global sourcing of grains, fresh produce, and agricultural inputs to food businesses in Oman and GCC.",
     details: [
       "Bulk grain imports: wheat, rice, barley, corn",
       "Fresh and frozen produce supply chains",
@@ -1280,7 +1311,7 @@ const services = [
       "Air freight for time-sensitive cargo",
       "Cross-Gulf road freight services",
       "Customs clearance and documentation",
-      "Warehousing and distribution in Bahrain",
+      "Warehousing and distribution in Oman",
     ],
   },
   {
@@ -1289,7 +1320,7 @@ const services = [
     color: "text-purple-700",
     bg: "bg-purple-50",
     summary:
-      "Comprehensive workforce supply, recruitment, and HR outsourcing for all industries in Bahrain.",
+      "Comprehensive workforce supply, recruitment, and HR outsourcing for all industries in Oman.",
     details: [
       "Skilled and unskilled worker supply",
       "Permanent and contract recruitment",
@@ -1511,17 +1542,17 @@ type PortfolioFilter =
 
 const projects = [
   {
-    name: "Seef Mall Infrastructure Supply",
+    name: "Muscat Grand Mall Infrastructure Supply",
     sector: "Construction" as PortfolioFilter,
     year: "2023",
-    desc: "Supplied structural steel, aggregates, and MEP materials for the expansion of Seef Mall's retail and parking complex.",
+    desc: "Supplied structural steel, aggregates, and MEP materials for the expansion of Muscat Grand Mall's retail and parking complex.",
     image: "/assets/generated/sector-construction.dim_600x400.jpg",
   },
   {
-    name: "Bahrain Bay Development — Building Materials",
+    name: "The Wave Muscat Development — Building Materials",
     sector: "Construction" as PortfolioFilter,
     year: "2022",
-    desc: "Long-term supply agreement for premium building materials throughout the prestigious Bahrain Bay waterfront development.",
+    desc: "Long-term supply agreement for premium building materials throughout the prestigious The Wave Muscat waterfront development.",
     image: "/assets/generated/sector-construction.dim_600x400.jpg",
   },
   {
@@ -1532,38 +1563,38 @@ const projects = [
     image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
   },
   {
-    name: "Al Hidd Industrial Zone Supply",
+    name: "Sohar Industrial Zone Supply",
     sector: "Industrial" as PortfolioFilter,
     year: "2022",
-    desc: "Supplied safety gear, industrial fasteners, and maintenance consumables to multiple factories in Al Hidd Free Zone.",
+    desc: "Supplied safety gear, industrial fasteners, and maintenance consumables to multiple factories in Sohar Free Zone.",
     image: "/assets/generated/sector-industrial.dim_600x400.jpg",
   },
   {
-    name: "Northern City Manpower Contract",
+    name: "Muscat New Urban Manpower Contract",
     sector: "Manpower" as PortfolioFilter,
     year: "2024",
-    desc: "Placed 120+ construction workers, electricians, and site supervisors for Northern City's Phase 2 housing project.",
+    desc: "Placed 120+ construction workers, electricians, and site supervisors for Muscat's new urban Phase 2 housing project.",
     image: "/assets/generated/labour-workers.dim_600x400.jpg",
   },
   {
-    name: "Isa Town Logistics Hub",
+    name: "Mina Sultan Qaboos Logistics Hub",
     sector: "Trading" as PortfolioFilter,
     year: "2023",
-    desc: "Managed import logistics and customs clearance for a major retail chain's new Isa Town distribution centre.",
+    desc: "Managed import logistics and customs clearance for a major retail chain's new Mina Sultan Qaboos distribution centre.",
     image: "/assets/generated/sector-trading.dim_600x400.jpg",
   },
   {
-    name: "Bahrain Petroleum Facility Supplies",
+    name: "Oman Oil Facility Supplies",
     sector: "Industrial" as PortfolioFilter,
     year: "2021",
-    desc: "Long-term industrial supply contract for PPE, tools, and safety equipment to a Bahrain petroleum facility.",
+    desc: "Long-term industrial supply contract for PPE, tools, and safety equipment to an Oman oil facility.",
     image: "/assets/generated/sector-industrial.dim_600x400.jpg",
   },
   {
     name: "Regional Food Distribution Network",
     sector: "Agriculture" as PortfolioFilter,
     year: "2022",
-    desc: "Established a multi-supplier fresh produce distribution network across Bahrain, Kuwait, and Qatar.",
+    desc: "Established a multi-supplier fresh produce distribution network across Oman, Kuwait, and Qatar.",
     image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
   },
 ];
@@ -1690,7 +1721,7 @@ function PortfolioPage({ navigate }: { navigate: (p: Page) => void }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: "40+", label: "Projects Completed" },
-              { value: "BD 5M+", label: "Value Delivered" },
+              { value: "OMR 5M+", label: "Value Delivered" },
               { value: "8+", label: "Years Active" },
               { value: "30+", label: "Happy Clients" },
             ].map((stat, i) => (
@@ -1744,7 +1775,7 @@ const teamMembers = [
     initials: "AR",
     name: "Abdullah Al-Rayat",
     title: "Founder & Managing Director",
-    bio: "With over 20 years of experience in Bahrain's industrial sector, Abdullah founded RAYAT with a vision to build a world-class trading and manpower company. He leads the company's strategic direction and key client relationships.",
+    bio: "With over 20 years of experience in Oman's industrial sector, Abdullah founded RAYAT with a vision to build a world-class trading and industrial company. He leads the company's strategic direction and key client relationships.",
     color: "bg-brand-teal text-white",
   },
   {
@@ -1927,7 +1958,7 @@ function TeamPage({ navigate }: { navigate: (p: Page) => void }) {
               learning, and cross-functional collaboration. Every team member —
               from operations to business development — is empowered to make
               decisions that benefit our clients. We celebrate diversity and
-              bring together talent from across the globe to serve Bahrain's
+              bring together talent from across the globe to serve Oman's
               growing economy.
             </p>
             <button
@@ -1954,7 +1985,7 @@ const newsArticles = [
     month: "JAN",
     year: "2026",
     excerpt:
-      "RAYAT Industries Trading SPC has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Bahrain's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Kingdom.",
+      "RAYAT Industries Trading SPC has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Oman's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Sultanate.",
     category: "Company News",
     color: "text-brand-teal",
     bg: "bg-brand-teal/10",
@@ -1977,7 +2008,7 @@ const newsArticles = [
     month: "NOV",
     year: "2025",
     excerpt:
-      "Following a competitive tender process, RAYAT Industries Trading SPC has been awarded preferred supplier status for a landmark infrastructure development in Bahrain's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over BD 2 million. This represents RAYAT's largest single construction supply contract to date.",
+      "Following a competitive tender process, RAYAT Industries Trading SPC has been awarded preferred supplier status for a landmark infrastructure development in Oman's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over OMR 2 million. This represents RAYAT's largest single construction supply contract to date.",
     category: "Awards",
     color: "text-brand-gold",
     bg: "bg-brand-gold/10",
@@ -1988,7 +2019,7 @@ const newsArticles = [
     month: "OCT",
     year: "2025",
     excerpt:
-      "RAYAT's agriculture and food trading division has recorded a 40% year-on-year increase in trading volume for FY2025. Growth was driven by expanded grain import programs and new contracts with Bahraini food manufacturers. The company plans to further invest in cold-chain logistics infrastructure to support fresh produce trading in 2026.",
+      "RAYAT's agriculture and food trading division has recorded a 40% year-on-year increase in trading volume for FY2025. Growth was driven by expanded grain import programs and new contracts with Omani food manufacturers. The company plans to further invest in cold-chain logistics infrastructure to support fresh produce trading in 2026.",
     category: "Financial",
     color: "text-green-700",
     bg: "bg-green-50",
@@ -1999,7 +2030,7 @@ const newsArticles = [
     month: "SEP",
     year: "2025",
     excerpt:
-      "RAYAT Industries Trading SPC has successfully renewed its Labour Market Regulatory Authority (LMRA) compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Bahraini labour law — giving our clients complete confidence in every placement we make.",
+      "RAYAT Industries Trading SPC has successfully renewed its Oman Labor Law compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Omani labour law — giving our clients complete confidence in every placement we make.",
     category: "Compliance",
     color: "text-brand-terracotta",
     bg: "bg-brand-terracotta/10",
@@ -2010,7 +2041,7 @@ const newsArticles = [
     month: "AUG",
     year: "2025",
     excerpt:
-      "RAYAT Industries Trading SPC marked its 10th anniversary in the Bahrain market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and manpower services. The Managing Director pledged continued investment in Bahrain's economic future.",
+      "RAYAT Industries Trading SPC marked its 10th anniversary in the Oman market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and trading services. The Managing Director pledged continued investment in Oman's economic future.",
     category: "Milestone",
     color: "text-blue-700",
     bg: "bg-blue-50",
@@ -2347,7 +2378,7 @@ function ContactPage() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative min-h-[300px] flex items-center justify-center overflow-hidden pt-16 md:pt-20 bg-brand-teal">
+      <section className="relative min-h-[300px] flex items-center justify-center overflow-hidden pt-20 md:pt-24 bg-brand-teal">
         <div
           className="absolute inset-0 opacity-5"
           style={{
@@ -2417,7 +2448,7 @@ function ContactPage() {
                     {
                       icon: MapPin,
                       label: "Address",
-                      content: "Manama, Kingdom of Bahrain",
+                      content: "Muscat, Sultanate of Oman",
                     },
                     {
                       icon: Mail,
@@ -2428,8 +2459,8 @@ function ContactPage() {
                     {
                       icon: Phone,
                       label: "Phone",
-                      content: "+973 1700 0000",
-                      href: "tel:+97317000000",
+                      content: "+968 2400 0000",
+                      href: "tel:+96824000000",
                     },
                     {
                       icon: Clock,
@@ -2470,14 +2501,14 @@ function ContactPage() {
                 </h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>
-                    Registered with the Ministry of Industry &amp; Commerce,
-                    Kingdom of Bahrain
+                    Registered with the Ministry of Commerce, Industry and
+                    Investment Promotion, Sultanate of Oman
                   </p>
                   <p>
                     <span className="font-semibold text-foreground">
                       CR No.:
                     </span>{" "}
-                    Bahrain CR Registration
+                    Oman CR Registration
                   </p>
                   <p>
                     <span className="font-semibold text-foreground">
@@ -2491,14 +2522,14 @@ function ContactPage() {
               {/* Map */}
               <div className="bg-white rounded-2xl shadow-lg border border-border overflow-hidden flex-1 min-h-[220px] relative">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57880.1!2d50.5577!3d26.2172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e49af4b45a39f3b%3A0x97f2a58c5bfac2!2sManama%2C%20Bahrain!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57880.1!2d58.3829!3d23.5880!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e91ffd577328f09%3A0x7c65a75db44f1e2f!2sMuscat%2C%20Oman!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
                   width="100%"
                   height="220"
                   className="border-0 w-full"
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="RAYAT Industries Location - Manama, Bahrain"
+                  title="RAYAT Industries Location - Muscat, Oman"
                 />
               </div>
             </motion.div>
@@ -2593,11 +2624,11 @@ function TradingDivisionsPage({ navigate }: { navigate: (p: Page) => void }) {
               Construction materials.
             </p>
             <p className="text-muted-foreground text-base leading-relaxed">
-              Founded in Bahrain with a vision to reshape Gulf commerce.
-              Building trusted partnerships across the Gulf since 2004, our
-              trading divisions serve hypermarkets, data centers, mega
-              construction projects, and industrial facilities with
-              uncompromising quality and reliability.
+              Founded in Oman with a vision to reshape Gulf commerce. Building
+              trusted partnerships across the Gulf since 2004, our trading
+              divisions serve hypermarkets, data centers, mega construction
+              projects, and industrial facilities with uncompromising quality
+              and reliability.
             </p>
           </motion.div>
         </div>
@@ -3784,17 +3815,11 @@ function SafetyPPEPage({ navigate }: { navigate: (p: Page) => void }) {
 // ─── Footer ────────────────────────────────────────────────────────────────────
 function Footer({ navigate }: { navigate: (p: Page) => void }) {
   const year = new Date().getFullYear();
-  const hostname =
-    typeof window !== "undefined" ? window.location.hostname : "";
-  const caffeineUrl = `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(hostname)}`;
 
   const footerLinks: { label: string; page: Page }[] = [
     { label: "Home", page: "home" },
-    { label: "Services", page: "services" },
-    { label: "Labour & Manpower", page: "labour" },
     { label: "Portfolio", page: "portfolio" },
-    { label: "Our Team", page: "team" },
-    { label: "News & Updates", page: "news" },
+    { label: "Services", page: "services" },
     { label: "Contact", page: "contact" },
     { label: "Trading Divisions", page: "trading-divisions" },
     { label: "FMCG Division", page: "fmcg" },
@@ -3813,7 +3838,8 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
               <img
                 src="/assets/generated/rayat-logo-transparent.dim_400x400-transparent.png"
                 alt="RAYAT Industries Trading SPC"
-                className="h-10 w-auto object-contain"
+                className="w-auto object-contain"
+                style={{ height: "80px" }}
               />
             </div>
             <p className="font-display font-bold text-lg text-white">
@@ -3823,8 +3849,7 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
               رايات للصناعات والتجارة
             </p>
             <p className="text-white/60 text-sm mt-3 leading-relaxed">
-              A trusted Bahraini partner for industrial growth, global trade,
-              and manpower solutions.
+              A trusted Omani partner for industrial growth and global trade.
             </p>
           </div>
 
@@ -3860,7 +3885,7 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
             <div className="space-y-2 text-sm text-white/70">
               <p className="flex items-center gap-2">
                 <MapPin size={14} className="flex-shrink-0 text-brand-gold" />
-                Manama, Kingdom of Bahrain
+                Muscat, Sultanate of Oman
               </p>
               <p className="flex items-center gap-2">
                 <Mail size={14} className="flex-shrink-0 text-brand-gold" />
@@ -3874,10 +3899,10 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
               <p className="flex items-center gap-2">
                 <Phone size={14} className="flex-shrink-0 text-brand-gold" />
                 <a
-                  href="tel:+97317000000"
+                  href="tel:+96824000000"
                   className="hover:text-white transition-colors"
                 >
-                  +973 1700 0000
+                  +968 2400 0000
                 </a>
               </p>
               <p className="flex items-center gap-2">
@@ -3890,14 +3915,6 @@ function Footer({ navigate }: { navigate: (p: Page) => void }) {
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
           <p>© {year} RAYAT Industries Trading SPC. All rights reserved.</p>
-          <a
-            href={caffeineUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white/80 transition-colors"
-          >
-            Built with ❤️ using caffeine.ai
-          </a>
         </div>
       </div>
     </footer>
