@@ -49,21 +49,23 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 // ─── VideoBackground component ────────────────────────────────────────────────
-// Uses a <video> element with fallback to a static image if video fails to load.
+// Renders a Vimeo background iframe. Vimeo allows autoplay/muted embeds via
+// the background=1 parameter and does not block cross-origin playback.
+// Falls back to static image if the iframe fails to load.
 function VideoBackground({
-  src,
+  vimeoId,
   fallbackImage,
   className = "",
   style = {},
 }: {
-  src: string;
+  vimeoId: string;
   fallbackImage: string;
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const [videoFailed, setVideoFailed] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  if (videoFailed) {
+  if (failed) {
     return (
       <div
         className={`absolute inset-0 bg-cover bg-center bg-no-repeat ${className}`}
@@ -73,17 +75,26 @@ function VideoBackground({
   }
 
   return (
-    <video
-      className={`absolute inset-0 w-full h-full object-cover ${className}`}
-      style={style}
-      src={src}
-      autoPlay
-      muted
-      loop
-      playsInline
-      poster={fallbackImage}
-      onError={() => setVideoFailed(true)}
-    />
+    <>
+      {/* Static fallback always rendered underneath */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${fallbackImage}')` }}
+      />
+      <iframe
+        className={`absolute inset-0 w-full h-full ${className}`}
+        style={{
+          border: "none",
+          transform: "scale(1.15)",
+          pointerEvents: "none",
+          ...style,
+        }}
+        src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`}
+        allow="autoplay; fullscreen"
+        onError={() => setFailed(true)}
+        title="background video"
+      />
+    </>
   );
 }
 
@@ -304,11 +315,10 @@ function Navbar({
                 className="font-black tracking-tight leading-none whitespace-nowrap"
                 style={{
                   fontSize: "clamp(1.2rem, 2vw, 1.7rem)",
-                  color: isTransparent ? "transparent" : "#1a4a35",
-                  WebkitTextStroke: isTransparent ? "1.5px #C9A84C" : "0px",
-                  paintOrder: "stroke fill",
+                  color: isTransparent ? "#ffffff" : "#1a4a35",
+                  WebkitTextStroke: "0px",
                   textShadow: isTransparent
-                    ? "-1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)"
+                    ? "0 0 12px rgba(255,255,255,0.55), 0 0 24px rgba(255,255,255,0.25), 0 2px 6px rgba(0,0,0,0.5)"
                     : "none",
                   transition: "all 0.3s",
                 }}
@@ -604,9 +614,9 @@ function HeroSection({
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Video background — with static image fallback if video fails */}
+      {/* Video background — Vimeo background player with static image fallback */}
       <VideoBackground
-        src="https://cdn.pixabay.com/video/2022/09/21/132272-752044197_large.mp4"
+        vimeoId="452823642"
         fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
       />
       <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/15 via-brand-teal/10 to-brand-teal-dark/15" />
@@ -799,7 +809,7 @@ function AboutSection({ lang }: { lang: Lang }) {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
               {/* About section — video with image fallback */}
               <VideoBackground
-                src="https://cdn.pixabay.com/video/2023/05/03/161015-822044455_large.mp4"
+                vimeoId="394143083"
                 fallbackImage="/assets/generated/about-dock-crane.dim_800x600.jpg"
               />
               <div className="absolute inset-0 rounded-2xl ring-4 ring-brand-gold/30 pointer-events-none" />
@@ -1009,7 +1019,7 @@ function WhyUsSection({ lang }: { lang: Lang }) {
       {/* Why Us section — video background with image fallback */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
         <VideoBackground
-          src="https://cdn.pixabay.com/video/2022/07/05/122886-727107710_large.mp4"
+          vimeoId="517090469"
           fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
         />
       </div>
