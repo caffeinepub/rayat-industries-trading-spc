@@ -48,6 +48,45 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+// ─── VideoBackground component ────────────────────────────────────────────────
+// Uses a <video> element with fallback to a static image if video fails to load.
+function VideoBackground({
+  src,
+  fallbackImage,
+  className = "",
+  style = {},
+}: {
+  src: string;
+  fallbackImage: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const [videoFailed, setVideoFailed] = useState(false);
+
+  if (videoFailed) {
+    return (
+      <div
+        className={`absolute inset-0 bg-cover bg-center bg-no-repeat ${className}`}
+        style={{ backgroundImage: `url('${fallbackImage}')`, ...style }}
+      />
+    );
+  }
+
+  return (
+    <video
+      className={`absolute inset-0 w-full h-full object-cover ${className}`}
+      style={style}
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      poster={fallbackImage}
+      onError={() => setVideoFailed(true)}
+    />
+  );
+}
+
 // ─── Language types & helpers ─────────────────────────────────────────────────
 type Lang = "en" | "ar";
 function makeT(lang: Lang) {
@@ -260,31 +299,46 @@ function Navbar({
               />
             </div>
             <span className="flex flex-col leading-none font-display transition-colors duration-300">
+              {/* RAYAT Industries — single inline line */}
               <span
-                className={`font-bold text-base md:text-lg lg:text-xl tracking-wide transition-colors duration-300 ${
-                  isTransparent ? "text-white" : "text-brand-teal-dark"
-                }`}
-                style={
-                  isTransparent
-                    ? {
-                        textShadow:
-                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
-                      }
-                    : undefined
-                }
+                className="font-black tracking-tight leading-none whitespace-nowrap"
+                style={{
+                  fontSize: "clamp(1.2rem, 2vw, 1.7rem)",
+                  color: isTransparent ? "transparent" : "#1a4a35",
+                  WebkitTextStroke: isTransparent ? "1.5px #C9A84C" : "0px",
+                  paintOrder: "stroke fill",
+                  textShadow: isTransparent
+                    ? "-1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)"
+                    : "none",
+                  transition: "all 0.3s",
+                }}
               >
-                RAYAT Industries
+                RAYAT{" "}
+                <span
+                  style={{
+                    fontSize: "clamp(0.7rem, 1.1vw, 0.95rem)",
+                    fontWeight: 600,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: isTransparent ? "rgba(201,168,76,0.9)" : "#1a4a35",
+                    WebkitTextStroke: "0px",
+                  }}
+                >
+                  Industries
+                </span>
               </span>
+              {/* Arabic below — one line */}
               <span
-                className={`font-medium text-sm md:text-base tracking-wide mt-0.5 transition-colors duration-300 ${
-                  isTransparent ? "text-brand-gold" : "text-brand-gold"
-                }`}
+                className="font-medium tracking-wide"
                 style={{
                   fontFamily:
                     "'Amiri', 'Scheherazade New', 'Arabic UI Text', serif",
                   direction: "rtl",
+                  fontSize: "clamp(0.55rem, 0.9vw, 0.72rem)",
+                  marginTop: "0.15em",
+                  color: "rgba(201,168,76,0.82)",
                   textShadow:
-                    "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
+                    "-1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)",
                 }}
               >
                 رايات للصناعات
@@ -550,33 +604,11 @@ function HeroSection({
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Static image fallback */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            "url('/assets/generated/hero-banner.dim_1400x600.jpg')",
-        }}
+      {/* Video background — with static image fallback if video fails */}
+      <VideoBackground
+        src="https://cdn.pixabay.com/video/2022/09/21/132272-752044197_large.mp4"
+        fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
       />
-      {/* Video background overlay */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover"
-        poster="/assets/generated/hero-banner.dim_1400x600.jpg"
-      >
-        <source
-          src="https://assets.mixkit.co/videos/preview/mixkit-cargo-ships-at-a-port-during-sunset-4531-large.mp4"
-          type="video/mp4"
-        />
-        <source
-          src="https://assets.mixkit.co/videos/preview/mixkit-port-at-sunset-4533-large.mp4"
-          type="video/mp4"
-        />
-      </video>
       <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/15 via-brand-teal/10 to-brand-teal-dark/15" />
       <div
         className="absolute inset-0 opacity-10"
@@ -615,7 +647,7 @@ function HeroSection({
                 WebkitTextStroke: "2px #C9A84C",
                 paintOrder: "stroke fill",
                 filter:
-                  "drop-shadow(0 0 5px rgba(255,255,255,0.6)) drop-shadow(-3px -3px 0 rgba(255,255,255,0.55)) drop-shadow(3px -3px 0 rgba(255,255,255,0.55)) drop-shadow(-3px 3px 0 rgba(255,255,255,0.55)) drop-shadow(3px 3px 0 rgba(255,255,255,0.55)) drop-shadow(0 4px 24px rgba(0,0,0,0.5))",
+                  "drop-shadow(0 0 8px rgba(255,255,255,0.65)) drop-shadow(0 0 20px rgba(255,255,255,0.35)) drop-shadow(0 4px 24px rgba(0,0,0,0.55))",
               }}
             >
               RAYAT
@@ -765,29 +797,11 @@ function AboutSection({ lang }: { lang: Lang }) {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                poster="/assets/generated/about-dock-crane.dim_800x600.jpg"
-                className="w-full h-full object-cover"
-              >
-                <source
-                  src="https://assets.mixkit.co/videos/preview/mixkit-loading-cargo-containers-onto-a-large-ship-4533-large.mp4"
-                  type="video/mp4"
-                />
-                <source
-                  src="https://assets.mixkit.co/videos/preview/mixkit-large-crane-loading-cargo-at-a-seaport-4532-large.mp4"
-                  type="video/mp4"
-                />
-                <img
-                  src="/assets/generated/about-dock-crane.dim_800x600.jpg"
-                  alt="Shipping containers being unloaded at a port with large cranes"
-                  className="w-full h-full object-cover"
-                />
-              </video>
+              {/* About section — video with image fallback */}
+              <VideoBackground
+                src="https://cdn.pixabay.com/video/2023/05/03/161015-822044455_large.mp4"
+                fallbackImage="/assets/generated/about-dock-crane.dim_800x600.jpg"
+              />
               <div className="absolute inset-0 rounded-2xl ring-4 ring-brand-gold/30 pointer-events-none" />
             </div>
           </motion.div>
@@ -992,23 +1006,13 @@ function WhyUsSection({ lang }: { lang: Lang }) {
       id="why-us"
       className="py-20 md:py-28 bg-brand-teal relative overflow-hidden"
     >
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        className="absolute inset-0 w-full h-full object-cover opacity-15"
-      >
-        <source
-          src="https://assets.mixkit.co/videos/preview/mixkit-industrial-factory-workers-in-helmets-4480-large.mp4"
-          type="video/mp4"
+      {/* Why Us section — video background with image fallback */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+        <VideoBackground
+          src="https://cdn.pixabay.com/video/2022/07/05/122886-727107710_large.mp4"
+          fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
         />
-        <source
-          src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-industrial-zone-at-dusk-4481-large.mp4"
-          type="video/mp4"
-        />
-      </video>
+      </div>
       <div
         className="absolute inset-0 opacity-5"
         style={{
