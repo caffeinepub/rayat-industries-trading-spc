@@ -48,55 +48,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-// ─── VideoBackground component ────────────────────────────────────────────────
-// Renders a Vimeo background iframe. Vimeo allows autoplay/muted embeds via
-// the background=1 parameter and does not block cross-origin playback.
-// Falls back to static image if the iframe fails to load.
-function VideoBackground({
-  vimeoId,
-  fallbackImage,
-  className = "",
-  style = {},
-}: {
-  vimeoId: string;
-  fallbackImage: string;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
-  const [failed, setFailed] = useState(false);
-
-  if (failed) {
-    return (
-      <div
-        className={`absolute inset-0 bg-cover bg-center bg-no-repeat ${className}`}
-        style={{ backgroundImage: `url('${fallbackImage}')`, ...style }}
-      />
-    );
-  }
-
-  return (
-    <>
-      {/* Static fallback always rendered underneath */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${fallbackImage}')` }}
-      />
-      <iframe
-        className={`absolute inset-0 w-full h-full ${className}`}
-        style={{
-          border: "none",
-          transform: "scale(1.15)",
-          pointerEvents: "none",
-          ...style,
-        }}
-        src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1`}
-        allow="autoplay; fullscreen"
-        onError={() => setFailed(true)}
-        title="background video"
-      />
-    </>
-  );
-}
+// VideoBackground removed — external video CDNs are unreliable in production.
+// All sections now use static high-quality image backgrounds.
 
 // ─── Language types & helpers ─────────────────────────────────────────────────
 type Lang = "en" | "ar";
@@ -310,48 +263,21 @@ function Navbar({
               />
             </div>
             <span className="flex flex-col leading-none font-display transition-colors duration-300">
-              {/* RAYAT Industries — single inline line */}
+              {/* RAYAT Industries — single inline line, uniform style */}
               <span
-                className="font-black tracking-tight leading-none whitespace-nowrap"
+                className="font-semibold tracking-widest uppercase whitespace-nowrap"
                 style={{
-                  fontSize: "clamp(1.2rem, 2vw, 1.7rem)",
-                  color: isTransparent ? "#ffffff" : "#1a4a35",
-                  WebkitTextStroke: "0px",
+                  fontSize: "clamp(1.1rem, 1.8vw, 1.5rem)",
+                  fontFamily: "'Cinzel', 'Trajan Pro', serif",
+                  letterSpacing: "0.18em",
+                  color: isTransparent ? "rgba(201,168,76,0.92)" : "#1a4a35",
                   textShadow: isTransparent
-                    ? "0 0 12px rgba(255,255,255,0.55), 0 0 24px rgba(255,255,255,0.25), 0 2px 6px rgba(0,0,0,0.5)"
+                    ? "-0.5px -0.5px 0 rgba(0,0,0,0.6), 0.5px -0.5px 0 rgba(0,0,0,0.6), -0.5px 0.5px 0 rgba(0,0,0,0.6), 0.5px 0.5px 0 rgba(0,0,0,0.6), 0 0 8px rgba(255,255,255,0.3)"
                     : "none",
                   transition: "all 0.3s",
                 }}
               >
-                RAYAT{" "}
-                <span
-                  style={{
-                    fontSize: "clamp(0.7rem, 1.1vw, 0.95rem)",
-                    fontWeight: 600,
-                    letterSpacing: "0.18em",
-                    textTransform: "uppercase",
-                    color: isTransparent ? "rgba(201,168,76,0.9)" : "#1a4a35",
-                    WebkitTextStroke: "0px",
-                  }}
-                >
-                  Industries
-                </span>
-              </span>
-              {/* Arabic below — one line */}
-              <span
-                className="font-medium tracking-wide"
-                style={{
-                  fontFamily:
-                    "'Amiri', 'Scheherazade New', 'Arabic UI Text', serif",
-                  direction: "rtl",
-                  fontSize: "clamp(0.55rem, 0.9vw, 0.72rem)",
-                  marginTop: "0.15em",
-                  color: "rgba(201,168,76,0.82)",
-                  textShadow:
-                    "-1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)",
-                }}
-              >
-                رايات للصناعات
+                RAYAT Industries
               </span>
             </span>
           </button>
@@ -614,10 +540,13 @@ function HeroSection({
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Video background — Vimeo background player with static image fallback */}
-      <VideoBackground
-        vimeoId="452823642"
-        fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
+      {/* Hero background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "url('/assets/generated/hero-banner.dim_1400x600.jpg')",
+        }}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/15 via-brand-teal/10 to-brand-teal-dark/15" />
       <div
@@ -652,12 +581,12 @@ function HeroSection({
               style={{
                 fontSize: "clamp(5rem, 12vw, 9rem)",
                 lineHeight: 1,
-                letterSpacing: "-0.02em",
+                letterSpacing: "0.05em",
                 color: "transparent",
                 WebkitTextStroke: "2px #C9A84C",
                 paintOrder: "stroke fill",
                 filter:
-                  "drop-shadow(0 0 8px rgba(255,255,255,0.65)) drop-shadow(0 0 20px rgba(255,255,255,0.35)) drop-shadow(0 4px 24px rgba(0,0,0,0.55))",
+                  "drop-shadow(0 0 1px #000) drop-shadow(0.5px 0.5px 0 #000) drop-shadow(-0.5px -0.5px 0 #000) drop-shadow(0 0 8px rgba(255,255,255,0.65)) drop-shadow(0 0 20px rgba(255,255,255,0.35)) drop-shadow(0 4px 24px rgba(0,0,0,0.55))",
               }}
             >
               RAYAT
@@ -807,10 +736,13 @@ function AboutSection({ lang }: { lang: Lang }) {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
-              {/* About section — video with image fallback */}
-              <VideoBackground
-                vimeoId="394143083"
-                fallbackImage="/assets/generated/about-dock-crane.dim_800x600.jpg"
+              {/* About section — dock crane image */}
+              <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{
+                  backgroundImage:
+                    "url('/assets/generated/about-dock-crane.dim_800x600.jpg')",
+                }}
               />
               <div className="absolute inset-0 rounded-2xl ring-4 ring-brand-gold/30 pointer-events-none" />
             </div>
@@ -825,16 +757,16 @@ function getSectors(lang: Lang) {
   const t = makeT(lang);
   return [
     {
-      title: t("Construction & Infrastructure", "البناء والبنية التحتية"),
+      title: t("Solar & Renewable Energy", "الطاقة الشمسية والمتجددة"),
       description: t(
-        "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Oman and the GCC.",
-        "نوفر مواد بناء عالية الجودة ومعدات وخدمات دعم المشاريع للمقاولين والمطورين في عُمان ودول الخليج.",
+        "Solar power generation, energy storage systems, solar heating, and complete renewable energy solutions for Oman and the Gulf.",
+        "توليد الطاقة الشمسية وأنظمة تخزين الطاقة والتدفئة الشمسية وحلول الطاقة المتجددة الكاملة.",
       ),
-      image: "/assets/generated/sector-construction.dim_600x400.jpg",
-      icon: Building2,
-      color: "text-brand-teal",
-      bg: "bg-brand-teal/10",
-      page: "services" as Page,
+      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+      icon: Zap,
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      page: "solar" as Page,
     },
     {
       title: t("Seafood & Food Trading", "المأكولات البحرية وتجارة الأغذية"),
@@ -847,6 +779,18 @@ function getSectors(lang: Lang) {
       color: "text-blue-700",
       bg: "bg-blue-50",
       page: "fmcg" as Page,
+    },
+    {
+      title: t("Construction & Infrastructure", "البناء والبنية التحتية"),
+      description: t(
+        "We supply high-quality construction materials, equipment, and project support services to contractors and developers across Oman and the GCC.",
+        "نوفر مواد بناء عالية الجودة ومعدات وخدمات دعم المشاريع للمقاولين والمطورين في عُمان ودول الخليج.",
+      ),
+      image: "/assets/generated/sector-construction.dim_600x400.jpg",
+      icon: Building2,
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+      page: "services" as Page,
     },
     {
       title: t("General Trading & Logistics", "التجارة العامة واللوجستيات"),
@@ -871,18 +815,6 @@ function getSectors(lang: Lang) {
       color: "text-brand-gold",
       bg: "bg-brand-gold/10",
       page: "services" as Page,
-    },
-    {
-      title: t("Solar & Renewable Energy", "الطاقة الشمسية والمتجددة"),
-      description: t(
-        "Solar power generation, energy storage systems, solar heating, and complete renewable energy solutions for Oman and the Gulf.",
-        "توليد الطاقة الشمسية وأنظمة تخزين الطاقة والتدفئة الشمسية وحلول الطاقة المتجددة الكاملة.",
-      ),
-      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
-      icon: Zap,
-      color: "text-yellow-600",
-      bg: "bg-yellow-50",
-      page: "solar" as Page,
     },
     {
       title: t("Trading Divisions", "أقسام التداول"),
@@ -1016,13 +948,7 @@ function WhyUsSection({ lang }: { lang: Lang }) {
       id="why-us"
       className="py-20 md:py-28 bg-brand-teal relative overflow-hidden"
     >
-      {/* Why Us section — video background with image fallback */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <VideoBackground
-          vimeoId="517090469"
-          fallbackImage="/assets/generated/hero-banner.dim_1400x600.jpg"
-        />
-      </div>
+      {/* Why Us section — teal background with subtle texture, no video needed */}
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -1724,6 +1650,36 @@ const services = [
       "Staff training and onboarding support",
     ],
   },
+  {
+    icon: Zap,
+    title: "Solar & Renewable Energy",
+    color: "text-yellow-600",
+    bg: "bg-yellow-50",
+    summary:
+      "Complete solar energy solutions — from power generation and storage to heating systems and accessories — for homes, businesses, and industry in Oman and the Gulf.",
+    details: [
+      "Solar power generation systems (on-grid & off-grid)",
+      "Solar power systems design and installation",
+      "Energy storage and battery conversion solutions",
+      "Solar heating and hot water systems",
+      "Solar components and accessories supply",
+    ],
+  },
+  {
+    icon: Wheat,
+    title: "Seafood & Poultry Trading",
+    color: "text-blue-700",
+    bg: "bg-blue-50",
+    summary:
+      "Premium fresh and frozen seafood and certified poultry products, sourced globally and delivered reliably to food businesses across Oman and the GCC.",
+    details: [
+      "Seafood: shrimp, tuna, salmon, mackerel, squid, cuttlefish, mussels, clams",
+      "Poultry: whole chicken (800g, 1000g, 1100g grades)",
+      "Eggs — fresh and graded for commercial supply",
+      "Cold-chain logistics and temperature-controlled delivery",
+      "Halal-certified sourcing and documentation",
+    ],
+  },
 ];
 
 function ServicesPage({
@@ -1737,7 +1693,7 @@ function ServicesPage({
     <div>
       <PageHero
         title="Our Services"
-        subtitle="Six integrated service lines delivering end-to-end industrial and trading solutions"
+        subtitle="Integrated service lines delivering end-to-end industrial, trading, solar, and food solutions"
         image="/assets/generated/page-services-hero.dim_1400x600.jpg"
         breadcrumb="Services"
       />
@@ -1858,7 +1814,7 @@ function ServicesPage({
             <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {[
               {
                 n: "01",
@@ -1872,11 +1828,16 @@ function ServicesPage({
               },
               {
                 n: "03",
+                title: "Negotiations",
+                desc: "We negotiate the best terms, pricing, and conditions on your behalf with verified suppliers.",
+              },
+              {
+                n: "04",
                 title: "Quality Check",
                 desc: "Rigorous quality inspection and verification before any shipment or deployment.",
               },
               {
-                n: "04",
+                n: "05",
                 title: "Delivery",
                 desc: "On-time delivery with complete documentation, logistics support, and after-service.",
               },

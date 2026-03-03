@@ -117,7 +117,7 @@
   }
 
   h1, h2, h3 {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'Cinzel', 'Playfair Display', 'Georgia', serif;
   }
 
   html {
@@ -175,6 +175,6 @@
   }
 
   .font-display {
-    font-family: 'Playfair Display', 'Georgia', serif;
+    font-family: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
   }
 }
