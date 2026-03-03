@@ -127,7 +127,7 @@ function PageHero({
           transition={{ duration: 0.7 }}
         >
           <p className="text-brand-gold/90 font-medium text-sm tracking-widest uppercase mb-3 text-outline">
-            RAYAT Industries Trading SPC &nbsp;/&nbsp; {breadcrumb}
+            RAYAT Industries &nbsp;/&nbsp; {breadcrumb}
           </p>
           <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-4 text-outline-strong">
             {title}
@@ -248,12 +248,17 @@ function Navbar({
             className="flex items-center gap-4 min-w-0 cursor-pointer"
             onClick={() => navigate("home")}
           >
-            <img
-              src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
-              alt="RAYAT Industries Trading SPC Logo"
-              className="w-auto object-contain flex-shrink-0"
-              style={{ height: "96px" }}
-            />
+            <div
+              className="relative flex-shrink-0"
+              style={{ width: "110px", height: "110px" }}
+            >
+              {/* Logo image centered */}
+              <img
+                src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
+                alt="RAYAT Industries Logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
             <span className="flex flex-col leading-none font-display transition-colors duration-300">
               <span
                 className={`font-bold text-base md:text-lg lg:text-xl tracking-wide transition-colors duration-300 ${
@@ -278,12 +283,8 @@ function Navbar({
                   fontFamily:
                     "'Amiri', 'Scheherazade New', 'Arabic UI Text', serif",
                   direction: "rtl",
-                  ...(isTransparent
-                    ? {
-                        textShadow:
-                          "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
-                      }
-                    : undefined),
+                  textShadow:
+                    "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.6)",
                 }}
               >
                 رايات للصناعات
@@ -572,7 +573,7 @@ function HeroSection({
           type="video/mp4"
         />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/90 via-brand-teal/75 to-brand-teal-dark/85" />
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/30 via-brand-teal/20 to-brand-teal-dark/30" />
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -589,28 +590,36 @@ function HeroSection({
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <p
-            className="font-semibold text-2xl md:text-3xl mb-3 tracking-widest text-outline"
+            className="font-semibold text-2xl md:text-3xl mb-3 tracking-widest"
             dir="rtl"
-            style={{ color: "rgba(201,168,76,0.45)" }}
+            style={{
+              color: "rgba(201,168,76,0.78)",
+              textShadow:
+                "-1px -1px 0 rgba(0,0,0,0.7), 1px -1px 0 rgba(0,0,0,0.7), -1px 1px 0 rgba(0,0,0,0.7), 1px 1px 0 rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.55)",
+            }}
           >
             رايات للصناعات والتجارة
           </p>
           <h1 className="mb-6">
             <span
-              className="font-display text-white font-black block text-outline-strong"
+              className="font-display font-black block text-outline-strong"
               style={{
                 fontSize: "clamp(5rem, 12vw, 9rem)",
                 lineHeight: 1,
                 letterSpacing: "-0.02em",
+                color: "rgba(255,255,255,0.88)",
               }}
             >
               RAYAT
             </span>
             <span
-              className="font-display text-brand-gold/90 font-semibold block tracking-[0.3em] uppercase text-outline"
+              className="font-display font-semibold block tracking-[0.3em] uppercase"
               style={{
                 fontSize: "clamp(1rem, 2.5vw, 1.8rem)",
                 marginTop: "0.25em",
+                color: "rgba(201,168,76,0.82)",
+                textShadow:
+                  "-1px -1px 0 rgba(0,0,0,0.7), 1px -1px 0 rgba(0,0,0,0.7), -1px 1px 0 rgba(0,0,0,0.7), 1px 1px 0 rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.5)",
               }}
             >
               industries
@@ -704,12 +713,12 @@ function AboutSection({ lang }: { lang: Lang }) {
               {t("Who We Are", "من نحن")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6 leading-tight">
-              {t("About RAYAT Industries", "عن رايات للصناعات والتجارة")}
+              {t("About RAYAT Industries", "عن رايات للصناعات")}
             </h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-6">
               {t(
                 "RAYAT Industries is a dynamic Omani company committed to driving industrial growth and facilitating global trade across the Sultanate. Founded on principles of integrity, quality, and innovation, we serve as a trusted partner for businesses across solar energy, seafood & food trading, construction, general trading, and industrial supply sectors.",
-                "رايات للصناعات والتجارة ش.ش.ف هي شركة عُمانية ديناميكية ملتزمة بدفع عجلة النمو الصناعي وتيسير التجارة العالمية في جميع أنحاء السلطنة. تأسست على مبادئ النزاهة والجودة والابتكار، ونعمل كشريك موثوق للشركات في قطاعات البناء والزراعة والتجارة العامة والإمدادات الصناعية.",
+                "رايات للصناعات ش.ش.ف هي شركة عُمانية ديناميكية ملتزمة بدفع عجلة النمو الصناعي وتيسير التجارة العالمية في جميع أنحاء السلطنة. تأسست على مبادئ النزاهة والجودة والابتكار، ونعمل كشريك موثوق للشركات في قطاعات البناء والزراعة والتجارة العامة والإمدادات الصناعية.",
               )}
             </p>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-10">
@@ -2538,7 +2547,7 @@ const newsArticles = [
     month: "JAN",
     year: "2026",
     excerpt:
-      "RAYAT Industries Trading SPC has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Oman's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Sultanate.",
+      "RAYAT Industries has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Oman's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Sultanate.",
     category: "Company News",
     color: "text-brand-teal",
     bg: "bg-brand-teal/10",
@@ -2561,7 +2570,7 @@ const newsArticles = [
     month: "NOV",
     year: "2025",
     excerpt:
-      "Following a competitive tender process, RAYAT Industries Trading SPC has been awarded preferred supplier status for a landmark infrastructure development in Oman's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over OMR 2 million. This represents RAYAT's largest single construction supply contract to date.",
+      "Following a competitive tender process, RAYAT Industries has been awarded preferred supplier status for a landmark infrastructure development in Oman's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over OMR 2 million. This represents RAYAT's largest single construction supply contract to date.",
     category: "Awards",
     color: "text-brand-gold",
     bg: "bg-brand-gold/10",
@@ -2583,7 +2592,7 @@ const newsArticles = [
     month: "SEP",
     year: "2025",
     excerpt:
-      "RAYAT Industries Trading SPC has successfully renewed its Oman Labor Law compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Omani labour law — giving our clients complete confidence in every placement we make.",
+      "RAYAT Industries has successfully renewed its Oman Labor Law compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Omani labour law — giving our clients complete confidence in every placement we make.",
     category: "Compliance",
     color: "text-brand-terracotta",
     bg: "bg-brand-terracotta/10",
@@ -2594,7 +2603,7 @@ const newsArticles = [
     month: "AUG",
     year: "2025",
     excerpt:
-      "RAYAT Industries Trading SPC marked its 10th anniversary in the Oman market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and trading services. The Managing Director pledged continued investment in Oman's economic future.",
+      "RAYAT Industries marked its 10th anniversary in the Oman market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and trading services. The Managing Director pledged continued investment in Oman's economic future.",
     category: "Milestone",
     color: "text-blue-700",
     bg: "bg-blue-50",
@@ -2957,7 +2966,7 @@ function ContactPage({ lang }: { lang: Lang }) {
             transition={{ duration: 0.7 }}
           >
             <p className="text-brand-gold font-medium text-sm tracking-widest uppercase mb-3">
-              RAYAT Industries Trading SPC / {t("Contact", "تواصل")}
+              RAYAT Industries / {t("Contact", "تواصل")}
             </p>
             <h1 className="font-display text-white font-bold text-3xl sm:text-4xl md:text-5xl mb-4 text-shadow-lg">
               {t("Get In Touch", "تواصل معنا")}
@@ -3496,8 +3505,8 @@ function FMCGPage({
             >
               <div className="rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/assets/generated/division-fmcg-hero.dim_1400x600.jpg"
-                  alt="FMCG Products"
+                  src="/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg"
+                  alt="Fresh Seafood and Poultry Products"
                   className="w-full h-auto object-cover aspect-[4/3]"
                 />
               </div>
@@ -4805,16 +4814,16 @@ function Footer({
             <div className="flex items-center gap-3 mb-4">
               <img
                 src="/assets/generated/rayat-logo-transparent.dim_400x400-transparent.png"
-                alt="RAYAT Industries Trading SPC"
+                alt="RAYAT Industries"
                 className="w-auto object-contain"
                 style={{ height: "80px" }}
               />
             </div>
             <p className="font-display font-bold text-lg text-white">
-              RAYAT Industries Trading SPC
+              RAYAT Industries
             </p>
             <p className="text-brand-gold mt-1" dir="rtl">
-              رايات للصناعات والتجارة
+              رايات للصناعات
             </p>
             <p className="text-white/60 text-sm mt-3 leading-relaxed">
               {t(
@@ -4911,7 +4920,7 @@ function Footer({
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
           <p>
-            © {year} RAYAT Industries Trading SPC.{" "}
+            © {year} RAYAT Industries.{" "}
             {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
         </div>
