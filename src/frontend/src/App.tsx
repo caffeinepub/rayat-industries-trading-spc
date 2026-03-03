@@ -564,16 +564,20 @@ function HeroSection({
         muted
         loop
         playsInline
-        preload="none"
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
         poster="/assets/generated/hero-banner.dim_1400x600.jpg"
       >
         <source
-          src="https://videos.pexels.com/video-files/852395/852395-hd_1920_1080_25fps.mp4"
+          src="https://assets.mixkit.co/videos/preview/mixkit-cargo-ships-at-a-port-during-sunset-4531-large.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://assets.mixkit.co/videos/preview/mixkit-port-at-sunset-4533-large.mp4"
           type="video/mp4"
         />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/30 via-brand-teal/20 to-brand-teal-dark/30" />
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-teal/15 via-brand-teal/10 to-brand-teal-dark/15" />
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -602,12 +606,16 @@ function HeroSection({
           </p>
           <h1 className="mb-6">
             <span
-              className="font-display font-black block text-outline-strong"
+              className="font-display font-black block"
               style={{
                 fontSize: "clamp(5rem, 12vw, 9rem)",
                 lineHeight: 1,
                 letterSpacing: "-0.02em",
-                color: "rgba(255,255,255,0.88)",
+                color: "transparent",
+                WebkitTextStroke: "2px #C9A84C",
+                paintOrder: "stroke fill",
+                filter:
+                  "drop-shadow(0 0 5px rgba(255,255,255,0.6)) drop-shadow(-3px -3px 0 rgba(255,255,255,0.55)) drop-shadow(3px -3px 0 rgba(255,255,255,0.55)) drop-shadow(-3px 3px 0 rgba(255,255,255,0.55)) drop-shadow(3px 3px 0 rgba(255,255,255,0.55)) drop-shadow(0 4px 24px rgba(0,0,0,0.5))",
               }}
             >
               RAYAT
@@ -762,12 +770,16 @@ function AboutSection({ lang }: { lang: Lang }) {
                 muted
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
                 poster="/assets/generated/about-dock-crane.dim_800x600.jpg"
                 className="w-full h-full object-cover"
               >
                 <source
-                  src="https://videos.pexels.com/video-files/4839014/4839014-uhd_2560_1440_25fps.mp4"
+                  src="https://assets.mixkit.co/videos/preview/mixkit-loading-cargo-containers-onto-a-large-ship-4533-large.mp4"
+                  type="video/mp4"
+                />
+                <source
+                  src="https://assets.mixkit.co/videos/preview/mixkit-large-crane-loading-cargo-at-a-seaport-4532-large.mp4"
                   type="video/mp4"
                 />
                 <img
@@ -985,11 +997,15 @@ function WhyUsSection({ lang }: { lang: Lang }) {
         muted
         loop
         playsInline
-        preload="none"
+        preload="auto"
         className="absolute inset-0 w-full h-full object-cover opacity-15"
       >
         <source
-          src="https://videos.pexels.com/video-files/5528018/5528018-hd_1920_1080_30fps.mp4"
+          src="https://assets.mixkit.co/videos/preview/mixkit-industrial-factory-workers-in-helmets-4480-large.mp4"
+          type="video/mp4"
+        />
+        <source
+          src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-a-industrial-zone-at-dusk-4481-large.mp4"
           type="video/mp4"
         />
       </video>
