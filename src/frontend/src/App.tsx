@@ -285,6 +285,25 @@ function Navbar({
               >
                 RAYAT Industries
               </span>
+              {/* Arabic brand name below English */}
+              <span
+                dir="rtl"
+                className="whitespace-nowrap mt-0.5"
+                style={{
+                  fontSize: "clamp(0.65rem, 1.1vw, 0.9rem)",
+                  fontFamily:
+                    "'Scheherazade New', 'Amiri', 'Arial', sans-serif",
+                  letterSpacing: "0.04em",
+                  color: isTransparent ? "rgba(201,168,76,0.85)" : "#1a4a35",
+                  textShadow: isTransparent
+                    ? "-0.5px -0.5px 0 rgba(0,0,0,0.5), 0.5px 0.5px 0 rgba(0,0,0,0.5)"
+                    : "none",
+                  transition: "all 0.3s",
+                  opacity: isTransparent ? 1 : 0.8,
+                }}
+              >
+                رايات للصناعات
+              </span>
             </span>
           </button>
 
@@ -570,48 +589,29 @@ function HeroSection({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <p
-            className="font-semibold text-2xl md:text-3xl mb-3 tracking-widest"
-            dir="rtl"
-            style={{
-              color: "rgba(201,168,76,0.82)",
-              textShadow:
-                "0 1px 4px rgba(0,0,0,0.5), 0 2px 12px rgba(0,0,0,0.35)",
-            }}
-          >
-            رايات للصناعات والتجارة
-          </p>
-          <h1 className="mb-6">
-            <span
-              className="font-black block"
-              style={{
-                fontSize: "clamp(5rem, 12vw, 9rem)",
-                lineHeight: 1,
-                letterSpacing: "0.06em",
-                fontFamily: "'Playfair Display', 'Georgia', serif",
-                color: "rgba(255, 248, 230, 0.35)",
-                WebkitTextStroke: "2px rgba(255, 255, 255, 0.95)",
-                paintOrder: "stroke fill",
-                textShadow:
-                  "0 2px 6px rgba(0,0,0,0.4), 0 4px 24px rgba(0,0,0,0.3)",
-              }}
-            >
-              RAYAT
-            </span>
-            <span
-              className="font-semibold block tracking-[0.3em] uppercase"
-              style={{
-                fontSize: "clamp(1rem, 2.5vw, 1.8rem)",
-                marginTop: "0.25em",
-                fontFamily: "'Playfair Display', 'Georgia', serif",
-                color: "rgba(201,168,76,0.88)",
-                textShadow:
-                  "0 1px 4px rgba(0,0,0,0.55), 0 2px 12px rgba(0,0,0,0.4)",
-              }}
-            >
-              industries
-            </span>
-          </h1>
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
+              alt="RAYAT Industries Logo"
+              className="object-contain mb-4 drop-shadow-2xl"
+              style={{ width: "auto", height: "clamp(140px, 18vw, 200px)" }}
+            />
+            <h1>
+              <span
+                className="font-semibold tracking-widest uppercase whitespace-nowrap block"
+                style={{
+                  fontSize: "clamp(1.4rem, 3.5vw, 2.5rem)",
+                  fontFamily: "'Cinzel', 'Trajan Pro', serif",
+                  letterSpacing: "0.18em",
+                  color: "rgba(201,168,76,0.92)",
+                  textShadow:
+                    "-0.5px -0.5px 0 rgba(0,0,0,0.6), 0.5px -0.5px 0 rgba(0,0,0,0.6), -0.5px 0.5px 0 rgba(0,0,0,0.6), 0.5px 0.5px 0 rgba(0,0,0,0.6), 0 0 12px rgba(255,255,255,0.4)",
+                }}
+              >
+                RAYAT Industries
+              </span>
+            </h1>
+          </div>
           <p className="text-white/85 text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed text-outline">
             {t(
               "Building Oman's Future Through Industrial Excellence & Global Trade",
@@ -835,18 +835,6 @@ function getSectors(lang: Lang) {
       color: "text-slate-700",
       bg: "bg-slate-50",
       page: "tyres-adhesives" as Page,
-    },
-    {
-      title: t("Trading Divisions", "أقسام التداول"),
-      description: t(
-        "FMCG (Seafood, Poultry & more), Solar Division, Networking, Construction Materials & Safety/PPE — our specialized trading divisions power the Gulf economy.",
-        "السلع الاستهلاكية والطاقة الشمسية والشبكات ومواد البناء والسلامة — أقسامنا المتخصصة تُقوّي الاقتصاد الخليجي بمنتجات متميزة.",
-      ),
-      image: "/assets/generated/trading-divisions-overview.dim_1400x600.jpg",
-      icon: Globe,
-      color: "text-blue-700",
-      bg: "bg-blue-50",
-      page: "trading-divisions" as Page,
     },
   ];
 }
@@ -1287,14 +1275,17 @@ function LabourPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang; // lang available for future use
+  const t = makeT(lang);
   return (
     <div>
       <PageHero
-        title="Labour & Manpower Solutions"
-        subtitle="Comprehensive workforce supply and recruitment services for businesses across Oman and the GCC"
+        title={t("Labour & Manpower Solutions", "حلول العمالة والقوى البشرية")}
+        subtitle={t(
+          "Comprehensive workforce supply and recruitment services for businesses across Oman and the GCC",
+          "خدمات شاملة لتوريد القوى العاملة والتوظيف للشركات في عُمان ودول الخليج",
+        )}
         image="/assets/generated/page-manpower-hero.dim_1400x600.jpg"
-        breadcrumb="Labour & Manpower"
+        breadcrumb={t("Labour & Manpower", "العمالة والقوى البشرية")}
       />
 
       {/* Intro */}
@@ -1722,16 +1713,19 @@ function ServicesPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
     <div>
       <PageHero
-        title="Our Services"
-        subtitle="Integrated service lines delivering end-to-end industrial, trading, solar, and food solutions"
+        title={t("Our Services", "خدماتنا")}
+        subtitle={t(
+          "Integrated service lines delivering end-to-end industrial, trading, solar, and food solutions",
+          "خطوط خدمة متكاملة تقدم حلولاً صناعية وتجارية وطاقة شمسية وغذائية شاملة",
+        )}
         image="/assets/generated/page-services-hero.dim_1400x600.jpg"
-        breadcrumb="Services"
+        breadcrumb={t("Services", "الخدمات")}
       />
 
       {/* Services Grid */}
@@ -1744,10 +1738,10 @@ function ServicesPage({
             className="text-center mb-12"
           >
             <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
-              What We Offer
+              {t("What We Offer", "ما نقدمه")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
-              Complete Service Portfolio
+              {t("Complete Service Portfolio", "محفظة الخدمات الكاملة")}
             </h2>
             <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
           </motion.div>
@@ -1842,10 +1836,10 @@ function ServicesPage({
             className="text-center mb-12"
           >
             <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3">
-              Our Process
+              {t("Our Process", "عمليتنا")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white">
-              How We Work
+              {t("How We Work", "كيف نعمل")}
             </h2>
             <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
           </motion.div>
@@ -1906,11 +1900,13 @@ function ServicesPage({
       <section className="py-14 bg-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Ready to Get Started?
+            {t("Ready to Get Started?", "مستعد للبدء؟")}
           </h3>
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            Contact us to discuss your requirements and receive a tailored
-            proposal from our team.
+            {t(
+              "Contact us to discuss your requirements and receive a tailored proposal from our team.",
+              "تواصل معنا لمناقشة متطلباتك وتلقي عرض مخصص من فريقنا.",
+            )}
           </p>
           <button
             type="button"
@@ -1918,7 +1914,7 @@ function ServicesPage({
             onClick={() => navigate("contact")}
             className="inline-flex items-center gap-2 bg-brand-teal text-white font-bold px-8 py-4 rounded-lg hover:bg-brand-teal-dark transition-colors shadow-lg"
           >
-            Request a Quote
+            {t("Request a Quote", "طلب عرض أسعار")}
             <ChevronRight size={18} />
           </button>
         </div>
@@ -2072,7 +2068,7 @@ function PortfolioPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const [filter, setFilter] = useState<PortfolioFilter>("All");
   const filters: PortfolioFilter[] = [
     "All",
@@ -2095,10 +2091,13 @@ function PortfolioPage({
   return (
     <div>
       <PageHero
-        title="Our Portfolio"
-        subtitle="Showcasing completed projects across solar energy, seafood & poultry, construction, industrial, and trading sectors"
+        title={t("Our Portfolio", "محفظتنا")}
+        subtitle={t(
+          "Showcasing completed projects across solar energy, seafood & poultry, construction, industrial, and trading sectors",
+          "عرض المشاريع المنجزة عبر قطاعات الطاقة الشمسية والمأكولات البحرية والدواجن والبناء والصناعة والتجارة",
+        )}
         image="/assets/generated/page-portfolio-hero.dim_1400x600.jpg"
-        breadcrumb="Portfolio"
+        breadcrumb={t("Portfolio", "المحفظة")}
       />
 
       {/* Filters + Grid */}
@@ -2362,11 +2361,16 @@ function PortfolioPage({
       <section className="py-14 bg-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Let's Work Together on Your Next Project
+            {t(
+              "Let's Work Together on Your Next Project",
+              "لنعمل معًا في مشروعك القادم",
+            )}
           </h3>
           <p className="text-muted-foreground mb-8 leading-relaxed">
-            Whether it's construction supply, manpower, or trading — RAYAT
-            delivers results you can count on.
+            {t(
+              "Whether it's construction supply, manpower, or trading — RAYAT delivers results you can count on.",
+              "سواء كان إمداد إنشاءات أو عمالة أو تجارة — رايات تحقق النتائج التي يمكنك الاعتماد عليها.",
+            )}
           </p>
           <button
             type="button"
@@ -2374,7 +2378,7 @@ function PortfolioPage({
             onClick={() => navigate("contact")}
             className="inline-flex items-center gap-2 bg-brand-teal text-white font-bold px-8 py-4 rounded-lg hover:bg-brand-teal-dark transition-colors shadow-lg"
           >
-            Discuss Your Project
+            {t("Discuss Your Project", "ناقش مشروعك")}
             <ChevronRight size={18} />
           </button>
         </div>
@@ -2450,14 +2454,17 @@ function TeamPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   return (
     <div>
       <PageHero
-        title="Our Team"
-        subtitle="Meet the leadership and management behind RAYAT's success"
+        title={t("Our Team", "فريقنا")}
+        subtitle={t(
+          "Meet the leadership and management behind RAYAT's success",
+          "تعرف على القيادة والإدارة وراء نجاح رايات",
+        )}
         image="/assets/generated/page-team-hero.dim_1400x600.jpg"
-        breadcrumb="Our Team"
+        breadcrumb={t("Our Team", "فريقنا")}
       />
 
       {/* Leadership */}
@@ -2670,16 +2677,19 @@ function NewsPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const [email, setEmail] = useState("");
 
   return (
     <div>
       <PageHero
-        title="News & Updates"
-        subtitle="Latest announcements, milestones, and industry updates from RAYAT"
+        title={t("News & Updates", "الأخبار والتحديثات")}
+        subtitle={t(
+          "Latest announcements, milestones, and industry updates from RAYAT",
+          "أحدث الإعلانات والإنجازات وتحديثات الصناعة من رايات",
+        )}
         image="/assets/generated/page-news-hero.dim_1400x600.jpg"
-        breadcrumb="News & Updates"
+        breadcrumb={t("News & Updates", "الأخبار والتحديثات")}
       />
 
       {/* News Grid */}
@@ -3201,7 +3211,7 @@ function TradingDivisionsPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const divisions = [
     {
       title: "Solar Division",
@@ -3276,10 +3286,13 @@ function TradingDivisionsPage({
   return (
     <div>
       <PageHero
-        title="Our Trading Divisions"
-        subtitle="Trusted trading partner across FMCG, Networking & Construction Materials. Building partnerships. Delivering excellence."
+        title={t("Our Trading Divisions", "أقسام التداول لدينا")}
+        subtitle={t(
+          "Trusted trading partner across FMCG, Networking & Construction Materials. Building partnerships. Delivering excellence.",
+          "شريك تجاري موثوق في السلع الاستهلاكية والشبكات ومواد البناء. بناء شراكات. تحقيق التميز.",
+        )}
         image="/assets/generated/trading-divisions-overview.dim_1400x600.jpg"
-        breadcrumb="Trading Divisions"
+        breadcrumb={t("Trading Divisions", "أقسام التداول")}
       />
 
       {/* Intro */}
@@ -3444,7 +3457,7 @@ function FMCGPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const productCategories = [
     {
       icon: Star,
@@ -3507,10 +3520,13 @@ function FMCGPage({
   return (
     <div>
       <PageHero
-        title="FMCG Division"
-        subtitle="Gulf's Trusted FMCG Trading Partner — Food, Beverages, Household & Personal Care"
+        title={t("FMCG Division", "قسم السلع الاستهلاكية")}
+        subtitle={t(
+          "Gulf's Trusted FMCG Trading Partner — Food, Beverages, Household & Personal Care",
+          "شريك تجاري موثوق للسلع الاستهلاكية في الخليج — الغذاء والمشروبات والمنزل والعناية الشخصية",
+        )}
         image="/assets/generated/division-fmcg-hero.dim_1400x600.jpg"
-        breadcrumb="FMCG Division"
+        breadcrumb={t("FMCG Division", "قسم السلع الاستهلاكية")}
       />
 
       {/* Intro */}
@@ -3843,7 +3859,7 @@ function NetworkingPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const productLines = [
     {
       icon: Server,
@@ -3900,10 +3916,13 @@ function NetworkingPage({
   return (
     <div>
       <PageHero
-        title="Networking Division"
-        subtitle="Delivering cutting-edge IT & telecom infrastructure solutions across the Gulf"
+        title={t("Networking Division", "قسم الشبكات")}
+        subtitle={t(
+          "Delivering cutting-edge IT & telecom infrastructure solutions across the Gulf",
+          "تقديم حلول البنية التحتية لتكنولوجيا المعلومات والاتصالات المتطورة عبر الخليج",
+        )}
         image="/assets/generated/division-networking-hero.dim_1400x600.jpg"
-        breadcrumb="Networking Division"
+        breadcrumb={t("Networking Division", "قسم الشبكات")}
       />
 
       {/* Intro */}
@@ -4121,7 +4140,7 @@ function ConstructionMaterialsPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const materials = [
     {
       title: "Steel Products",
@@ -4174,10 +4193,13 @@ function ConstructionMaterialsPage({
   return (
     <div>
       <PageHero
-        title="Construction Materials"
-        subtitle="The Raw Materials Powering Gulf Megaprojects — Steel, Aluminum, Copper & More"
+        title={t("Construction Materials", "مواد البناء")}
+        subtitle={t(
+          "The Raw Materials Powering Gulf Megaprojects — Steel, Aluminum, Copper & More",
+          "المواد الخام التي تُشغّل مشاريع الخليج الكبرى — الصلب والألومنيوم والنحاس وأكثر",
+        )}
         image="/assets/generated/division-construction-materials-hero.dim_1400x600.jpg"
-        breadcrumb="Construction Materials"
+        breadcrumb={t("Construction Materials", "مواد البناء")}
       />
 
       {/* Intro */}
@@ -4371,7 +4393,7 @@ function SafetyPPEPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const ppeCategories = [
     {
       icon: HardHat,
@@ -4434,10 +4456,16 @@ function SafetyPPEPage({
   return (
     <div>
       <PageHero
-        title="Safety & PPE / Metals & Raw Materials"
-        subtitle="Safety & PPE and Metals & Raw Materials for Gulf Megaprojects"
+        title={t(
+          "Safety & PPE / Metals & Raw Materials",
+          "السلامة ومعدات الوقاية / المعادن والمواد الخام",
+        )}
+        subtitle={t(
+          "Safety & PPE and Metals & Raw Materials for Gulf Megaprojects",
+          "معدات السلامة والوقاية والمعادن والمواد الخام لمشاريع الخليج الكبرى",
+        )}
         image="/assets/generated/division-safety-ppe-hero.dim_1400x600.jpg"
-        breadcrumb="Safety & PPE / Metals"
+        breadcrumb={t("Safety & PPE / Metals", "السلامة والمعادن")}
       />
 
       {/* Overview */}
@@ -4620,7 +4648,7 @@ function SolarDivisionPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const products = [
     {
       icon: Zap,
@@ -4662,10 +4690,13 @@ function SolarDivisionPage({
   return (
     <div>
       <PageHero
-        title="Solar Division"
-        subtitle="Renewable Energy Solutions for Oman & the Gulf — Solar Power, Storage & Heating Systems"
+        title={t("Solar Division", "قسم الطاقة الشمسية")}
+        subtitle={t(
+          "Renewable Energy Solutions for Oman & the Gulf — Solar Power, Storage & Heating Systems",
+          "حلول الطاقة المتجددة لعُمان والخليج — الطاقة الشمسية والتخزين وأنظمة التسخين",
+        )}
         image="/assets/generated/division-solar-hero.dim_1400x600.jpg"
-        breadcrumb="Solar Division"
+        breadcrumb={t("Solar Division", "قسم الطاقة الشمسية")}
       />
 
       {/* Intro */}
@@ -4846,7 +4877,7 @@ function TyresAdhesivesDivisionPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
-  void lang;
+  const t = makeT(lang);
   const products = [
     {
       icon: Truck,
@@ -4895,10 +4926,13 @@ function TyresAdhesivesDivisionPage({
   return (
     <div>
       <PageHero
-        title="Tyres & Adhesives Division"
-        subtitle="Premium Tyres, Industrial Adhesives & Sealants for Automotive, Construction and Manufacturing"
+        title={t("Tyres & Adhesives Division", "قسم الإطارات والمواد اللاصقة")}
+        subtitle={t(
+          "Premium Tyres, Industrial Adhesives & Sealants for Automotive, Construction and Manufacturing",
+          "إطارات فاخرة ومواد لاصقة صناعية وعوازل للسيارات والبناء والتصنيع",
+        )}
         image="/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg"
-        breadcrumb="Tyres & Adhesives"
+        breadcrumb={t("Tyres & Adhesives", "الإطارات والمواد اللاصقة")}
       />
 
       {/* Intro */}
