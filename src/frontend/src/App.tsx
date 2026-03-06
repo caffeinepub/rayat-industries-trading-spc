@@ -589,9 +589,11 @@ function HeroSection({
                 lineHeight: 1,
                 letterSpacing: "0.06em",
                 fontFamily: "'Playfair Display', 'Georgia', serif",
-                color: "rgba(255, 248, 230, 0.95)",
+                color: "rgba(255, 248, 230, 0.35)",
+                WebkitTextStroke: "2px rgba(255, 255, 255, 0.95)",
+                paintOrder: "stroke fill",
                 textShadow:
-                  "0 2px 6px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(0,0,0,0.5)",
+                  "0 2px 6px rgba(0,0,0,0.4), 0 4px 24px rgba(0,0,0,0.3)",
               }}
             >
               RAYAT
@@ -2084,8 +2086,11 @@ function PortfolioPage({
     "Trading",
     "Manpower",
   ];
-  const filtered =
-    filter === "All" ? projects : projects.filter((p) => p.sector === filter);
+  const filtered = (
+    filter === "All" ? projects : projects.filter((p) => p.sector === filter)
+  )
+    .slice()
+    .sort((a, b) => Number(b.year) - Number(a.year));
 
   return (
     <div>
