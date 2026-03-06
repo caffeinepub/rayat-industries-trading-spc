@@ -1,44 +1,46 @@
-# RAYAT Industries Trading SPC
+# RAYAT Industries
 
 ## Current State
-A multi-page React SPA for RAYAT Industries Trading SPC with pages: Home, Labour & Manpower, Services, Portfolio, Our Team, News, Contact, and 4 Trading Division sub-pages. The site has a navbar, hero section, about section, sectors cards, why-us section, and footer. All location references currently say Bahrain. The navbar order is: Home, Services, Labour & Manpower, Portfolio, Our Team, News, Trading, Contact. Footer has a "Built with caffeine.ai" link. The About section has an "Established in / Bahrain" badge overlay.
+Full multi-page React website for RAYAT Industries. The hero section features a large "RAYAT" text using Cinzel font with transparent fill, gold WebkitTextStroke, and heavy white glow drop-shadow filters making it look very modern/outlined. Trading divisions include Solar, FMCG, Networking, Construction Materials, Safety & PPE — no Tyres & Adhesives division. Portfolio and Services pages have no tyres/adhesives content.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Larger fonts with text-shadow effects on the home page hero/main panel
-- Highlighted, bolder fonts on sector cards
-- Enhanced card animation (glow/lift effect with border highlight on hover)
-- New dock/crane container image for the About section (replacing the current about-us image)
+- New trading division: **Tyres & Adhesives** — full page with products (automotive tyres, truck tyres, off-road/industrial tyres, adhesives, sealants, specialty bonding products)
+- Tyres & Adhesives entry in the Trading Divisions overview page
+- Tyres & Adhesives entry in the navbar Trading dropdown
+- 2 portfolio projects for Tyres & Adhesives
+- 1 upcoming project for Tyres & Adhesives
+- Tyres & Adhesives service card on the Services page
+- Tyres & Adhesives sector card on the home page sectors grid
+- Generated image for Tyres & Adhesives hero/section
+- "tyres-adhesives" page type
 
 ### Modify
-- All location references (Bahrain, Bahraini, Manama, Kingdom of Bahrain, Bahrain Bay, Seef Mall, etc.) changed to Oman equivalents (Muscat, Sultanate of Oman, Omani, etc.)
-- Navbar order changed to: Home, Portfolio, Services, Trading (dropdown), Contact
-- Remove "Established in" text from all "Established" badge overlays (keep just the location or remove entirely)
-- Hero main panel: bigger font sizes, stronger text-shadow, more visual weight
-- Sector cards: font-bold/larger titles, highlighted color on title text
-- Cards across sectors: richer hover animation (scale + glow + border color transition)
+- **RAYAT hero text**: Remove the outlined/transparent fill treatment. Replace with a solid, warm-white or rich cream text in **Playfair Display** (already loaded) — bold, elegant, classic serif. No WebkitTextStroke, no transparent color. Keep size and position. Use a strong but natural drop-shadow for readability over the video background. The "industries" subtext below RAYAT should also update to match (same font family, muted gold color, clean).
+- Trading overview page: add Tyres & Adhesives card
+- Navbar Trading dropdown: add Tyres & Adhesives link
+- Mobile navbar: add Tyres & Adhesives link
+- Footer quick links: add Tyres & Adhesives
+- PortfolioFilter type: add "Tyres" filter
+- sectorColors: add Tyres entry
+- Portfolio filter tabs: add "Tyres" tab
+- Upcoming projects: add 1 tyres/adhesives entry
 
 ### Remove
-- Labour & Manpower page from navbar (hide from nav, keep page accessible if linked)
-- News page from navbar (remove from nav)
-- Our Team page from navbar (remove from nav)
-- "Labour & Manpower" nav link
-- "Our Team" nav link  
-- "News" nav link
-- Footer quick links for Labour, News, Our Team should also be removed
-- HomeContactCTA secondary button linking to Labour page
-- "Built with caffeine.ai" link in footer
-- "Established in" label text in the About section badge
+- Nothing removed
 
 ## Implementation Plan
-1. Generate a new dock/crane container image for About section
-2. Update Navbar: reorder to Home, Portfolio, Services, Trading, Contact; remove Labour, News, Our Team links
-3. Update HomePage HeroSection: increase font sizes, add stronger text-shadow classes
-4. Update SectorsSection cards: larger/bolder/highlighted title fonts, enhanced hover animation (glow, border highlight, scale)
-5. Update AboutSection: replace image src with new dock image, remove "Established in" text from badge, change "Bahrain" → "Oman" in content
-6. Find and replace all location references (Bahrain → Oman, Bahraini → Omani, Manama → Muscat, Kingdom of Bahrain → Sultanate of Oman, etc.) throughout entire App.tsx
-7. Update Footer: remove Labour, News, Our Team links; remove "Built with caffeine.ai" link; update location to Oman
-8. Remove HomeContactCTA Labour & Manpower secondary button
-9. Update portfolio projects: replace Bahrain-specific project names with Oman equivalents
-10. Update contact page: change address/map to Muscat, Oman
+1. Generate image for Tyres & Adhesives division hero
+2. Update RAYAT hero text styling in HeroSection — change font to Playfair Display, solid cream/white fill, remove stroke/transparent treatment, use natural text-shadow
+3. Update "industries" subtext styling to match (Playfair Display, gold, no stroke)
+4. Add `"tyres-adhesives"` to the `Page` type
+5. Add TyresAdhesivesDivisionPage component (full page like SolarDivisionPage)
+6. Add Tyres & Adhesives to tradingSubLinks in Navbar
+7. Add Tyres & Adhesives to TradingDivisionsPage divisions list
+8. Add Tyres & Adhesives service to services array
+9. Add Tyres & Adhesives sector to getSectors()
+10. Add 2 portfolio projects + 1 upcoming project
+11. Add PortfolioFilter "Tyres", sectorColors entry, filter tab
+12. Add page routing in App Root
+13. Add footer quick link

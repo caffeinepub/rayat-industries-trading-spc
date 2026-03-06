@@ -71,7 +71,8 @@ type Page =
   | "networking"
   | "construction-materials"
   | "safety-ppe"
-  | "solar";
+  | "solar"
+  | "tyres-adhesives";
 
 // ─── Watermark component ──────────────────────────────────────────────────────
 function LogoWatermark({ size = 320 }: { size?: number }) {
@@ -195,6 +196,7 @@ function Navbar({
     "construction-materials",
     "safety-ppe",
     "solar",
+    "tyres-adhesives",
   ];
   const isTradingActive = tradingDivisionPages.includes(currentPage);
 
@@ -219,6 +221,10 @@ function Navbar({
     {
       label: t("Safety & PPE / Metals", "السلامة والمعادن"),
       page: "safety-ppe",
+    },
+    {
+      label: t("Tyres & Adhesives", "الإطارات والمواد اللاصقة"),
+      page: "tyres-adhesives",
     },
   ];
 
@@ -568,37 +574,37 @@ function HeroSection({
             className="font-semibold text-2xl md:text-3xl mb-3 tracking-widest"
             dir="rtl"
             style={{
-              color: "rgba(201,168,76,0.78)",
+              color: "rgba(201,168,76,0.82)",
               textShadow:
-                "-1px -1px 0 rgba(0,0,0,0.7), 1px -1px 0 rgba(0,0,0,0.7), -1px 1px 0 rgba(0,0,0,0.7), 1px 1px 0 rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.55)",
+                "0 1px 4px rgba(0,0,0,0.5), 0 2px 12px rgba(0,0,0,0.35)",
             }}
           >
             رايات للصناعات والتجارة
           </p>
           <h1 className="mb-6">
             <span
-              className="font-display font-black block"
+              className="font-black block"
               style={{
                 fontSize: "clamp(5rem, 12vw, 9rem)",
                 lineHeight: 1,
-                letterSpacing: "0.05em",
-                color: "transparent",
-                WebkitTextStroke: "2px #C9A84C",
-                paintOrder: "stroke fill",
-                filter:
-                  "drop-shadow(0 0 1px #000) drop-shadow(0.5px 0.5px 0 #000) drop-shadow(-0.5px -0.5px 0 #000) drop-shadow(0 0 8px rgba(255,255,255,0.65)) drop-shadow(0 0 20px rgba(255,255,255,0.35)) drop-shadow(0 4px 24px rgba(0,0,0,0.55))",
+                letterSpacing: "0.06em",
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                color: "rgba(255, 248, 230, 0.95)",
+                textShadow:
+                  "0 2px 6px rgba(0,0,0,0.6), 0 4px 24px rgba(0,0,0,0.45), 0 1px 0 rgba(0,0,0,0.5)",
               }}
             >
               RAYAT
             </span>
             <span
-              className="font-display font-semibold block tracking-[0.3em] uppercase"
+              className="font-semibold block tracking-[0.3em] uppercase"
               style={{
                 fontSize: "clamp(1rem, 2.5vw, 1.8rem)",
                 marginTop: "0.25em",
-                color: "rgba(201,168,76,0.82)",
+                fontFamily: "'Playfair Display', 'Georgia', serif",
+                color: "rgba(201,168,76,0.88)",
                 textShadow:
-                  "-1px -1px 0 rgba(0,0,0,0.7), 1px -1px 0 rgba(0,0,0,0.7), -1px 1px 0 rgba(0,0,0,0.7), 1px 1px 0 rgba(0,0,0,0.7), 0 2px 10px rgba(0,0,0,0.5)",
+                  "0 1px 4px rgba(0,0,0,0.55), 0 2px 12px rgba(0,0,0,0.4)",
               }}
             >
               industries
@@ -815,6 +821,18 @@ function getSectors(lang: Lang) {
       color: "text-brand-gold",
       bg: "bg-brand-gold/10",
       page: "services" as Page,
+    },
+    {
+      title: t("Tyres & Adhesives", "الإطارات والمواد اللاصقة"),
+      description: t(
+        "Premium automotive, truck, and industrial tyres alongside high-performance adhesives, sealants, and bonding products for industrial and commercial applications.",
+        "إطارات سيارات وشاحنات وصناعية متميزة إلى جانب مواد لاصقة وعوازل عالية الأداء للتطبيقات الصناعية والتجارية.",
+      ),
+      image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+      icon: Truck,
+      color: "text-slate-700",
+      bg: "bg-slate-50",
+      page: "tyres-adhesives" as Page,
     },
     {
       title: t("Trading Divisions", "أقسام التداول"),
@@ -1680,6 +1698,22 @@ const services = [
       "Halal-certified sourcing and documentation",
     ],
   },
+  {
+    icon: Truck,
+    title: "Tyres & Adhesives",
+    color: "text-slate-700",
+    bg: "bg-slate-100",
+    summary:
+      "Comprehensive supply of premium automotive, truck, and industrial tyres alongside high-performance adhesives, sealants, and bonding compounds for industrial applications across Oman and the GCC.",
+    details: [
+      "Automotive tyres: passenger car, SUV, and 4x4 tyres from leading brands",
+      "Truck & heavy-vehicle tyres: radial and bias-ply for all tonnage",
+      "Off-road and industrial tyres for construction and mining equipment",
+      "Industrial adhesives: structural, assembly, and multi-purpose bonding",
+      "Sealants: silicone, polyurethane, and acrylic for construction and manufacturing",
+      "Specialty bonding products: epoxies, contact adhesives, and industrial tapes",
+    ],
+  },
 ];
 
 function ServicesPage({
@@ -1901,7 +1935,8 @@ type PortfolioFilter =
   | "Manpower"
   | "Seafood"
   | "Poultry"
-  | "Solar";
+  | "Solar"
+  | "Tyres";
 
 const projects = [
   {
@@ -1997,6 +2032,20 @@ const projects = [
     image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
   },
   {
+    name: "Commercial Tyre Supply — Sohar Industrial Zone",
+    sector: "Tyres" as PortfolioFilter,
+    year: "2024",
+    desc: "Long-term supply contract for truck and heavy-vehicle tyres to multiple logistics and construction companies operating in Sohar Free Zone and Port of Sohar.",
+    image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+  },
+  {
+    name: "Industrial Adhesives & Sealants — Muscat Construction Projects",
+    sector: "Tyres" as PortfolioFilter,
+    year: "2023",
+    desc: "Supplied structural adhesives, polyurethane sealants, and specialty bonding compounds to three major construction contractors for Muscat commercial and residential developments.",
+    image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+  },
+  {
     name: "Solar Water Heating — Residential Development",
     sector: "Solar" as PortfolioFilter,
     year: "2023",
@@ -2014,6 +2063,7 @@ const sectorColors: Record<string, { text: string; bg: string }> = {
   Seafood: { text: "text-blue-700", bg: "bg-blue-50" },
   Poultry: { text: "text-amber-700", bg: "bg-amber-50" },
   Solar: { text: "text-yellow-700", bg: "bg-yellow-50" },
+  Tyres: { text: "text-slate-700", bg: "bg-slate-100" },
 };
 
 function PortfolioPage({
@@ -2027,6 +2077,7 @@ function PortfolioPage({
     "Solar",
     "Seafood",
     "Poultry",
+    "Tyres",
     "Construction",
     "Agriculture",
     "Industrial",
@@ -2216,6 +2267,15 @@ function PortfolioPage({
                 icon: Wheat,
                 color: "text-amber-300",
                 bg: "bg-amber-300/10 border-amber-300/30",
+              },
+              {
+                name: "Gulf-Wide Tyre & Adhesives Distribution Network",
+                sector: "Tyres",
+                eta: "Q2 2026",
+                desc: "Establishing a regional distribution hub in Muscat to supply premium automotive and industrial tyres plus construction-grade adhesives and sealants to dealers and contractors across Oman, UAE, and Qatar.",
+                icon: Truck,
+                color: "text-slate-300",
+                bg: "bg-slate-300/10 border-slate-300/30",
               },
             ].map((project, i) => {
               const Icon = project.icon;
@@ -3188,6 +3248,16 @@ function TradingDivisionsPage({
       color: "text-brand-terracotta",
       bg: "bg-brand-terracotta/10",
       page: "safety-ppe" as Page,
+    },
+    {
+      title: "Tyres & Adhesives",
+      description:
+        "Premium automotive, truck, and industrial tyres alongside high-performance adhesives, sealants, and bonding compounds for construction and manufacturing.",
+      image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+      icon: Truck,
+      color: "text-slate-700",
+      bg: "bg-slate-100",
+      page: "tyres-adhesives" as Page,
     },
   ];
 
@@ -4766,6 +4836,239 @@ function SolarDivisionPage({
   );
 }
 
+// ─── TYRES & ADHESIVES DIVISION PAGE ─────────────────────────────────────────
+function TyresAdhesivesDivisionPage({
+  navigate,
+  lang,
+}: { navigate: (p: Page) => void; lang: Lang }) {
+  void lang;
+  const products = [
+    {
+      icon: Truck,
+      title: "Automotive Tyres",
+      desc: "Premium passenger car, SUV, and 4x4 tyres from globally certified brands. Full range of sizes covering performance, comfort, and all-season applications.",
+      color: "text-slate-700",
+      bg: "bg-slate-100",
+    },
+    {
+      icon: Package,
+      title: "Truck & Heavy-Vehicle Tyres",
+      desc: "Radial and bias-ply tyres for light commercial vehicles, heavy trucks, trailers, and buses. High load-rating options for Gulf road conditions and long-haul routes.",
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+    },
+    {
+      icon: Building2,
+      title: "Off-Road & Industrial Tyres",
+      desc: "Robust tyres for construction machinery, forklifts, agricultural equipment, and mining vehicles. Designed for heavy-duty performance on rough terrain.",
+      color: "text-orange-700",
+      bg: "bg-orange-50",
+    },
+    {
+      icon: Layers,
+      title: "Industrial Adhesives",
+      desc: "High-strength structural adhesives, assembly adhesives, and multi-purpose bonding agents for manufacturing, construction, and maintenance applications.",
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Sealants & Waterproofing",
+      desc: "Silicone, polyurethane, and acrylic sealants for construction joints, facades, roofing, and waterproofing — suitable for extreme Gulf climate conditions.",
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+    },
+    {
+      icon: Star,
+      title: "Specialty Bonding Products",
+      desc: "Epoxy adhesives, contact adhesives, anaerobic compounds, cyanoacrylates, and industrial tapes for specialized engineering and fabrication applications.",
+      color: "text-brand-terracotta",
+      bg: "bg-brand-terracotta/10",
+    },
+  ];
+
+  return (
+    <div>
+      <PageHero
+        title="Tyres & Adhesives Division"
+        subtitle="Premium Tyres, Industrial Adhesives & Sealants for Automotive, Construction and Manufacturing"
+        image="/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg"
+        breadcrumb="Tyres & Adhesives"
+      />
+
+      {/* Intro */}
+      <section className="py-16 md:py-24 bg-brand-sand">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3 border-s-4 border-brand-gold ps-3">
+                Division Overview
+              </span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-5 leading-tight">
+                Your Trusted Tyres & Adhesives Partner in Oman
+              </h2>
+              <p className="text-muted-foreground text-base md:text-lg leading-relaxed mb-5">
+                RAYAT's Tyres & Adhesives Division supplies premium-quality
+                tyres and industrial bonding solutions to automotive businesses,
+                construction contractors, and manufacturers across Oman and the
+                GCC. We source from globally certified brands and maintain
+                competitive pricing with reliable local delivery.
+              </p>
+              <p className="text-muted-foreground text-base leading-relaxed mb-8">
+                From passenger car tyres to heavy off-road equipment rubber, and
+                from everyday sealants to advanced structural adhesives, we
+                cover the full spectrum of requirements for Oman's growing
+                automotive and construction sectors.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  data-ocid="tyres.contact.primary_button"
+                  onClick={() => navigate("contact")}
+                  className="inline-flex items-center justify-center gap-2 bg-brand-teal text-white font-bold px-6 py-3 rounded-lg hover:bg-brand-teal-dark transition-colors"
+                >
+                  Request a Quote <ChevronRight size={16} />
+                </button>
+                <button
+                  type="button"
+                  data-ocid="tyres.trading.secondary_button"
+                  onClick={() => navigate("trading-divisions")}
+                  className="inline-flex items-center justify-center gap-2 border-2 border-brand-teal text-brand-teal font-bold px-6 py-3 rounded-lg hover:bg-brand-teal hover:text-white transition-all"
+                >
+                  All Divisions
+                </button>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="rounded-2xl overflow-hidden shadow-2xl">
+                <img
+                  src="/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg"
+                  alt="Tyres & Adhesives Division"
+                  className="w-full h-auto object-cover aspect-[4/3]"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-brand-teal text-white px-5 py-3 rounded-xl shadow-xl">
+                <div className="font-display text-xl font-extrabold">GCC</div>
+                <div className="text-xs opacity-80">Wide Supply</div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Products */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-brand-teal font-semibold text-sm tracking-widest uppercase mb-3">
+              What We Supply
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Product Categories
+            </h2>
+            <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {products.map((prod, i) => {
+              const Icon = prod.icon;
+              return (
+                <motion.div
+                  key={prod.title}
+                  data-ocid={`tyres.product.card.${i + 1}`}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl border border-border transition-shadow duration-300"
+                >
+                  <div
+                    className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${prod.bg} ${prod.color} mb-4`}
+                  >
+                    <Icon size={22} />
+                  </div>
+                  <h3 className="font-display font-bold text-foreground text-lg mb-2">
+                    {prod.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {prod.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Why RAYAT Tyres */}
+      <section className="py-14 bg-brand-teal relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 30% 50%, white 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-6">
+              Why Choose RAYAT Tyres & Adhesives?
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {[
+                "Globally certified tyre brands suited for Gulf road and climate conditions",
+                "Full range from passenger vehicles to heavy industrial equipment",
+                "Construction-grade adhesives and sealants tested for extreme heat and humidity",
+                "Competitive pricing, fast delivery, and dedicated after-sales support across Oman",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 text-left bg-white/10 rounded-xl p-4 border border-white/15"
+                >
+                  <BadgeCheck
+                    className="text-brand-gold flex-shrink-0 mt-0.5"
+                    size={18}
+                  />
+                  <p className="text-white/90 text-sm leading-relaxed">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              data-ocid="tyres.enquiry.primary_button"
+              onClick={() => navigate("contact")}
+              className="inline-flex items-center gap-2 bg-brand-gold text-gray-900 font-bold px-8 py-4 rounded-lg hover:opacity-90 transition-opacity shadow-lg"
+            >
+              Enquire Now <ChevronRight size={18} />
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // ─── Footer ────────────────────────────────────────────────────────────────────
 function Footer({
   navigate,
@@ -4793,6 +5096,10 @@ function Footer({
     {
       label: t("Safety & PPE / Metals", "السلامة والمعادن"),
       page: "safety-ppe",
+    },
+    {
+      label: t("Tyres & Adhesives", "الإطارات والمواد اللاصقة"),
+      page: "tyres-adhesives",
     },
   ];
 
@@ -4988,6 +5295,9 @@ export default function App() {
             )}
             {currentPage === "solar" && (
               <SolarDivisionPage navigate={navigate} lang={lang} />
+            )}
+            {currentPage === "tyres-adhesives" && (
+              <TyresAdhesivesDivisionPage navigate={navigate} lang={lang} />
             )}
           </motion.div>
         </AnimatePresence>
