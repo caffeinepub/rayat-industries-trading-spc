@@ -250,12 +250,18 @@ function Navbar({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-28 md:h-32">
-          {/* Logo + Name */}
+          {/* Logo + Name — hidden on home hero (isTransparent), visible on scroll or other pages */}
           <button
             type="button"
             data-ocid="nav.home.link"
-            className="flex items-center gap-4 min-w-0 cursor-pointer"
+            className="flex items-center gap-4 min-w-0 cursor-pointer transition-all duration-500"
+            style={{
+              opacity: isTransparent ? 0 : 1,
+              pointerEvents: isTransparent ? "none" : "auto",
+              transform: isTransparent ? "translateY(-8px)" : "translateY(0)",
+            }}
             onClick={() => navigate("home")}
+            aria-hidden={isTransparent}
           >
             <div
               className="relative flex-shrink-0"
@@ -269,16 +275,18 @@ function Navbar({
               />
             </div>
             <span className="flex flex-col leading-none font-display transition-colors duration-300">
-              {/* RAYAT Industries — single inline line, uniform style */}
+              {/* RAYAT Industries — single inline line, Cinzel serif style */}
               <span
                 className="font-semibold tracking-widest uppercase whitespace-nowrap"
                 style={{
                   fontSize: "clamp(1.1rem, 1.8vw, 1.5rem)",
                   fontFamily: "'Cinzel', 'Trajan Pro', serif",
                   letterSpacing: "0.18em",
-                  color: isTransparent ? "rgba(201,168,76,0.92)" : "#1a4a35",
+                  color: isTransparent
+                    ? "rgba(201,168,76,0.92)"
+                    : "oklch(0.38 0.12 162)",
                   textShadow: isTransparent
-                    ? "-0.5px -0.5px 0 rgba(0,0,0,0.6), 0.5px -0.5px 0 rgba(0,0,0,0.6), -0.5px 0.5px 0 rgba(0,0,0,0.6), 0.5px 0.5px 0 rgba(0,0,0,0.6), 0 0 8px rgba(255,255,255,0.3)"
+                    ? "-0.4px -0.4px 0 rgba(0,0,0,0.5), 0.4px -0.4px 0 rgba(0,0,0,0.5), -0.4px 0.4px 0 rgba(0,0,0,0.5), 0.4px 0.4px 0 rgba(0,0,0,0.5), 0 0 8px rgba(255,255,255,0.25)"
                     : "none",
                   transition: "all 0.3s",
                 }}
@@ -294,12 +302,14 @@ function Navbar({
                   fontFamily:
                     "'Scheherazade New', 'Amiri', 'Arial', sans-serif",
                   letterSpacing: "0.04em",
-                  color: isTransparent ? "rgba(201,168,76,0.85)" : "#1a4a35",
+                  color: isTransparent
+                    ? "rgba(201,168,76,0.82)"
+                    : "oklch(0.38 0.12 162)",
                   textShadow: isTransparent
-                    ? "-0.5px -0.5px 0 rgba(0,0,0,0.5), 0.5px 0.5px 0 rgba(0,0,0,0.5)"
+                    ? "-0.3px -0.3px 0 rgba(0,0,0,0.45), 0.3px 0.3px 0 rgba(0,0,0,0.45)"
                     : "none",
                   transition: "all 0.3s",
-                  opacity: isTransparent ? 1 : 0.8,
+                  opacity: isTransparent ? 0.85 : 0.9,
                 }}
               >
                 رايات للصناعات
@@ -315,7 +325,7 @@ function Navbar({
                 key={link.page}
                 data-ocid={`nav.${link.page}.link`}
                 onClick={() => navigate(link.page)}
-                className={`font-medium text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
+                className={`font-normal text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
                   currentPage === link.page
                     ? isTransparent
                       ? "text-white border-b-2 border-white"
@@ -324,14 +334,15 @@ function Navbar({
                       ? "text-white/90 hover:text-white"
                       : "text-brand-teal-dark hover:text-brand-teal"
                 }`}
-                style={
-                  isTransparent
+                style={{
+                  fontFamily: "'Gelasio', 'Georgia', serif",
+                  ...(isTransparent
                     ? {
                         textShadow:
                           "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
                       }
-                    : undefined
-                }
+                    : {}),
+                }}
               >
                 {link.label}
               </button>
@@ -346,7 +357,7 @@ function Navbar({
                 onBlur={() =>
                   setTimeout(() => setTradingDropdownOpen(false), 150)
                 }
-                className={`flex items-center gap-1 font-medium text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
+                className={`flex items-center gap-1 font-normal text-sm tracking-wide transition-all duration-200 cursor-pointer pb-0.5 ${
                   isTradingActive
                     ? isTransparent
                       ? "text-white border-b-2 border-white"
@@ -355,14 +366,15 @@ function Navbar({
                       ? "text-white/90 hover:text-white"
                       : "text-brand-teal-dark hover:text-brand-teal"
                 }`}
-                style={
-                  isTransparent
+                style={{
+                  fontFamily: "'Gelasio', 'Georgia', serif",
+                  ...(isTransparent
                     ? {
                         textShadow:
                           "-1px -1px 0 rgba(0,0,0,0.9), 1px -1px 0 rgba(0,0,0,0.9), -1px 1px 0 rgba(0,0,0,0.9), 1px 1px 0 rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)",
                       }
-                    : undefined
-                }
+                    : {}),
+                }}
               >
                 {t("Trading", "التداول")}
                 <ChevronDown
@@ -433,6 +445,7 @@ function Navbar({
                   ? "bg-white/20 border border-white text-white hover:bg-white/40 backdrop-blur-sm"
                   : "bg-brand-teal text-white hover:bg-brand-teal-dark"
               } ${currentPage === "contact" && !isTransparent ? "ring-2 ring-brand-teal-dark" : ""}`}
+              style={{ fontFamily: "'Gelasio', 'Georgia', serif" }}
             >
               {t("Contact Us", "تواصل معنا")}
             </button>
@@ -590,11 +603,18 @@ function HeroSection({
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="flex flex-col items-center mb-6">
-            <img
+            <motion.img
               src="/assets/generated/rayat-logo-extracted-transparent-transparent.dim_400x400.png"
               alt="RAYAT Industries Logo"
               className="object-contain mb-4 drop-shadow-2xl"
-              style={{ width: "auto", height: "clamp(140px, 18vw, 200px)" }}
+              style={{ width: "auto", height: "clamp(160px, 20vw, 240px)" }}
+              animate={{ scale: [1, 1.18, 1] }}
+              transition={{
+                repeat: Number.POSITIVE_INFINITY,
+                duration: 3.5,
+                ease: "easeInOut",
+              }}
+              whileHover={{ scale: 1.22 }}
             />
             <h1>
               <span
@@ -611,8 +631,13 @@ function HeroSection({
                 RAYAT Industries
               </span>
             </h1>
+            {/* Decorative gold divider */}
+            <div className="w-24 h-0.5 bg-brand-gold/60 mx-auto my-3 rounded-full" />
           </div>
-          <p className="text-white/85 text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed text-outline">
+          <p
+            className="text-white/90 font-medium text-xl md:text-2xl lg:text-3xl mb-10 max-w-3xl mx-auto leading-relaxed text-outline"
+            style={{ fontFamily: "'Gelasio', 'Georgia', serif" }}
+          >
             {t(
               "Building Oman's Future Through Industrial Excellence & Global Trade",
               "بناء مستقبل عُمان من خلال التميز الصناعي والتجارة العالمية",
@@ -1203,79 +1228,117 @@ function HomePage({
 }
 
 // ─── LABOUR & MANPOWER PAGE ───────────────────────────────────────────────────
-const workerCategories = [
-  {
-    icon: HardHat,
-    title: "Construction Workers",
-    desc: "Builders, masons, steel fixers, scaffolders, carpenters, and civil laborers for all construction scales.",
-    color: "text-orange-700",
-    bg: "bg-orange-50",
-  },
-  {
-    icon: Zap,
-    title: "Technical & Skilled Trades",
-    desc: "Electricians, plumbers, welders, HVAC technicians, and pipefitters with verified certifications.",
-    color: "text-brand-teal",
-    bg: "bg-brand-teal/10",
-  },
-  {
-    icon: Factory,
-    title: "Industrial Workers",
-    desc: "Machine operators, warehouse staff, factory workers, and production line technicians.",
-    color: "text-brand-gold",
-    bg: "bg-brand-gold/10",
-  },
-  {
-    icon: Briefcase,
-    title: "Office & Administrative",
-    desc: "Data entry operators, receptionists, admin executives, and office support staff.",
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-  },
-  {
-    icon: Hotel,
-    title: "Hospitality & Service",
-    desc: "Hotel staff, cleaners, drivers, security guards, and front-of-house personnel.",
-    color: "text-purple-700",
-    bg: "bg-purple-50",
-  },
-  {
-    icon: Wheat,
-    title: "Agricultural Workers",
-    desc: "Farm laborers, irrigation technicians, agricultural equipment operators, and produce handlers.",
-    color: "text-green-700",
-    bg: "bg-green-50",
-  },
-];
+function getWorkerCategories(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      icon: HardHat,
+      title: t("Construction Workers", "عمال البناء"),
+      desc: t(
+        "Builders, masons, steel fixers, scaffolders, carpenters, and civil laborers for all construction scales.",
+        "بنائون وبناة بالحجارة ومثبتو فولاذ وعمال سقالات ونجارون وعمال مدنيون لجميع أحجام البناء.",
+      ),
+      color: "text-orange-700",
+      bg: "bg-orange-50",
+    },
+    {
+      icon: Zap,
+      title: t("Technical & Skilled Trades", "المهن التقنية والمهارية"),
+      desc: t(
+        "Electricians, plumbers, welders, HVAC technicians, and pipefitters with verified certifications.",
+        "كهربائيون وسباكون ولحامون وفنيو تكييف وعمال تركيب أنابيب بشهادات موثقة.",
+      ),
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+    },
+    {
+      icon: Factory,
+      title: t("Industrial Workers", "العمال الصناعيون"),
+      desc: t(
+        "Machine operators, warehouse staff, factory workers, and production line technicians.",
+        "مشغلو آلات وطاقم المستودعات وعمال المصانع وفنيو خطوط الإنتاج.",
+      ),
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+    },
+    {
+      icon: Briefcase,
+      title: t("Office & Administrative", "المكتبية والإدارية"),
+      desc: t(
+        "Data entry operators, receptionists, admin executives, and office support staff.",
+        "مشغلو إدخال البيانات والموظفون الإداريون ومساعدو المكاتب.",
+      ),
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+    },
+    {
+      icon: Hotel,
+      title: t("Hospitality & Service", "الضيافة والخدمات"),
+      desc: t(
+        "Hotel staff, cleaners, drivers, security guards, and front-of-house personnel.",
+        "طاقم الفنادق والعمال والسائقون وحراس الأمن وموظفو الاستقبال.",
+      ),
+      color: "text-purple-700",
+      bg: "bg-purple-50",
+    },
+    {
+      icon: Wheat,
+      title: t("Agricultural Workers", "العمال الزراعيون"),
+      desc: t(
+        "Farm laborers, irrigation technicians, agricultural equipment operators, and produce handlers.",
+        "عمال المزارع وفنيو الري ومشغلو المعدات الزراعية ومناولو المنتجات.",
+      ),
+      color: "text-green-700",
+      bg: "bg-green-50",
+    },
+  ];
+}
 
-const recruitmentSteps = [
-  {
-    step: "01",
-    title: "Submit Requirements",
-    desc: "Share your workforce needs — number, skills, timeline, and any certifications required.",
-  },
-  {
-    step: "02",
-    title: "Candidate Sourcing",
-    desc: "We tap our network of pre-vetted candidates from 15+ source countries across South and Southeast Asia.",
-  },
-  {
-    step: "03",
-    title: "Screening & Vetting",
-    desc: "Thorough background checks, skill verification, medical fitness, and reference validation.",
-  },
-  {
-    step: "04",
-    title: "Deployment",
-    desc: "Handle all visa processing, LMRA compliance, contracts, and smooth on-boarding coordination.",
-  },
-];
+function getRecruitmentSteps(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      step: "01",
+      title: t("Submit Requirements", "تقديم المتطلبات"),
+      desc: t(
+        "Share your workforce needs — number, skills, timeline, and any certifications required.",
+        "شارك احتياجاتك من القوى العاملة — العدد والمهارات والجدول الزمني وأي شهادات مطلوبة.",
+      ),
+    },
+    {
+      step: "02",
+      title: t("Candidate Sourcing", "استقطاب المرشحين"),
+      desc: t(
+        "We tap our network of pre-vetted candidates from 15+ source countries across South and Southeast Asia.",
+        "نستغل شبكتنا من المرشحين المتحقق منهم مسبقاً من أكثر من 15 دولة عبر جنوب وجنوب شرق آسيا.",
+      ),
+    },
+    {
+      step: "03",
+      title: t("Screening & Vetting", "الفرز والتحقق"),
+      desc: t(
+        "Thorough background checks, skill verification, medical fitness, and reference validation.",
+        "فحوصات خلفية شاملة والتحقق من المهارات واللياقة الطبية والتحقق من المراجع.",
+      ),
+    },
+    {
+      step: "04",
+      title: t("Deployment", "الإرسال"),
+      desc: t(
+        "Handle all visa processing, LMRA compliance, contracts, and smooth on-boarding coordination.",
+        "معالجة جميع التأشيرات والامتثال للوائح سوق العمل والعقود وتنسيق الإعداد الوظيفي السلس.",
+      ),
+    },
+  ];
+}
 
 function LabourPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
   const t = makeT(lang);
+  const workerCategories = getWorkerCategories(lang);
+  const recruitmentSteps = getRecruitmentSteps(lang);
   return (
     <div>
       <PageHero
@@ -1570,144 +1633,282 @@ function LabourPage({
 }
 
 // ─── SERVICES PAGE ─────────────────────────────────────────────────────────────
-const services = [
-  {
-    icon: Building2,
-    title: "Construction & Infrastructure Supply",
-    color: "text-brand-teal",
-    bg: "bg-brand-teal/10",
-    summary:
-      "Premium construction materials, heavy equipment, and project support for Oman's development projects.",
-    details: [
-      "Structural steel, rebar, and metal works",
-      "Cement, aggregates, and ready-mix concrete",
-      "MEP materials and electrical components",
-      "Heavy equipment rental and procurement",
-      "Project site supply logistics management",
-    ],
-  },
-  {
-    icon: Wheat,
-    title: "Agriculture & Food Trading",
-    color: "text-green-700",
-    bg: "bg-green-50",
-    summary:
-      "Global sourcing of grains, fresh produce, and agricultural inputs to food businesses in Oman and GCC.",
-    details: [
-      "Bulk grain imports: wheat, rice, barley, corn",
-      "Fresh and frozen produce supply chains",
-      "Animal feed and livestock supplies",
-      "Agricultural equipment and tools",
-      "Fertilizers and crop protection products",
-    ],
-  },
-  {
-    icon: Factory,
-    title: "Industrial Supplies",
-    color: "text-brand-gold",
-    bg: "bg-brand-gold/10",
-    summary:
-      "Comprehensive range of industrial tools, equipment, safety gear, and consumables for manufacturing.",
-    details: [
-      "Safety gear: PPE, helmets, gloves, harnesses",
-      "Hand tools, power tools, and cutting equipment",
-      "Industrial fasteners and hardware",
-      "Lubricants, sealants, and maintenance products",
-      "Conveyor systems and material handling",
-    ],
-  },
-  {
-    icon: Globe,
-    title: "General Trading & Commodities",
-    color: "text-brand-terracotta",
-    bg: "bg-brand-terracotta/10",
-    summary:
-      "Wide-ranging import/export of commercial goods with competitive pricing and reliable global networks.",
-    details: [
-      "Consumer goods import and distribution",
-      "Export facilitation for local manufacturers",
-      "Commodity trading and brokering",
-      "Cross-border trade documentation",
-      "Customs clearance advisory services",
-    ],
-  },
-  {
-    icon: Truck,
-    title: "Logistics & Freight Management",
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-    summary:
-      "End-to-end freight management across sea, air, and road with full customs clearance support.",
-    details: [
-      "Sea freight FCL/LCL shipments",
-      "Air freight for time-sensitive cargo",
-      "Cross-Gulf road freight services",
-      "Customs clearance and documentation",
-      "Warehousing and distribution in Oman",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Labour & Manpower Solutions",
-    color: "text-purple-700",
-    bg: "bg-purple-50",
-    summary:
-      "Comprehensive workforce supply, recruitment, and HR outsourcing for all industries in Oman.",
-    details: [
-      "Skilled and unskilled worker supply",
-      "Permanent and contract recruitment",
-      "HR outsourcing and payroll management",
-      "LMRA compliance and visa processing",
-      "Staff training and onboarding support",
-    ],
-  },
-  {
-    icon: Zap,
-    title: "Solar & Renewable Energy",
-    color: "text-yellow-600",
-    bg: "bg-yellow-50",
-    summary:
-      "Complete solar energy solutions — from power generation and storage to heating systems and accessories — for homes, businesses, and industry in Oman and the Gulf.",
-    details: [
-      "Solar power generation systems (on-grid & off-grid)",
-      "Solar power systems design and installation",
-      "Energy storage and battery conversion solutions",
-      "Solar heating and hot water systems",
-      "Solar components and accessories supply",
-    ],
-  },
-  {
-    icon: Wheat,
-    title: "Seafood & Poultry Trading",
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-    summary:
-      "Premium fresh and frozen seafood and certified poultry products, sourced globally and delivered reliably to food businesses across Oman and the GCC.",
-    details: [
-      "Seafood: shrimp, tuna, salmon, mackerel, squid, cuttlefish, mussels, clams",
-      "Poultry: whole chicken (800g, 1000g, 1100g grades)",
-      "Eggs — fresh and graded for commercial supply",
-      "Cold-chain logistics and temperature-controlled delivery",
-      "Halal-certified sourcing and documentation",
-    ],
-  },
-  {
-    icon: Truck,
-    title: "Tyres & Adhesives",
-    color: "text-slate-700",
-    bg: "bg-slate-100",
-    summary:
-      "Comprehensive supply of premium automotive, truck, and industrial tyres alongside high-performance adhesives, sealants, and bonding compounds for industrial applications across Oman and the GCC.",
-    details: [
-      "Automotive tyres: passenger car, SUV, and 4x4 tyres from leading brands",
-      "Truck & heavy-vehicle tyres: radial and bias-ply for all tonnage",
-      "Off-road and industrial tyres for construction and mining equipment",
-      "Industrial adhesives: structural, assembly, and multi-purpose bonding",
-      "Sealants: silicone, polyurethane, and acrylic for construction and manufacturing",
-      "Specialty bonding products: epoxies, contact adhesives, and industrial tapes",
-    ],
-  },
-];
+function getServices(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      icon: Building2,
+      title: t(
+        "Construction & Infrastructure Supply",
+        "إمداد البناء والبنية التحتية",
+      ),
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+      summary: t(
+        "Premium construction materials, heavy equipment, and project support for Oman's development projects.",
+        "مواد بناء متميزة ومعدات ثقيلة ودعم المشاريع لمشاريع التنمية في عُمان.",
+      ),
+      details: [
+        t(
+          "Structural steel, rebar, and metal works",
+          "الفولاذ الهيكلي وحديد التسليح والأعمال المعدنية",
+        ),
+        t(
+          "Cement, aggregates, and ready-mix concrete",
+          "الإسمنت والركام والخرسانة الجاهزة",
+        ),
+        t(
+          "MEP materials and electrical components",
+          "مواد الميكانيكا والكهرباء والسباكة والمكونات الكهربائية",
+        ),
+        t(
+          "Heavy equipment rental and procurement",
+          "استئجار وشراء المعدات الثقيلة",
+        ),
+        t(
+          "Project site supply logistics management",
+          "إدارة لوجستيات التوريد في مواقع المشاريع",
+        ),
+      ],
+    },
+    {
+      icon: Wheat,
+      title: t("Agriculture & Food Trading", "الزراعة وتجارة الأغذية"),
+      color: "text-green-700",
+      bg: "bg-green-50",
+      summary: t(
+        "Global sourcing of grains, fresh produce, and agricultural inputs to food businesses in Oman and GCC.",
+        "التوريد العالمي للحبوب والمنتجات الطازجة والمدخلات الزراعية للشركات الغذائية في عُمان والخليج.",
+      ),
+      details: [
+        t(
+          "Bulk grain imports: wheat, rice, barley, corn",
+          "استيراد الحبوب بالجملة: قمح، أرز، شعير، ذرة",
+        ),
+        t(
+          "Fresh and frozen produce supply chains",
+          "سلاسل إمداد المنتجات الطازجة والمجمدة",
+        ),
+        t(
+          "Animal feed and livestock supplies",
+          "أعلاف الحيوانات ومستلزمات الثروة الحيوانية",
+        ),
+        t("Agricultural equipment and tools", "معدات وأدوات زراعية"),
+        t(
+          "Fertilizers and crop protection products",
+          "الأسمدة ومنتجات حماية المحاصيل",
+        ),
+      ],
+    },
+    {
+      icon: Factory,
+      title: t("Industrial Supplies", "الإمدادات الصناعية"),
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+      summary: t(
+        "Comprehensive range of industrial tools, equipment, safety gear, and consumables for manufacturing.",
+        "مجموعة شاملة من الأدوات والمعدات الصناعية ومعدات السلامة والمستهلكات للتصنيع.",
+      ),
+      details: [
+        t(
+          "Safety gear: PPE, helmets, gloves, harnesses",
+          "معدات السلامة: معدات الحماية الشخصية، خوذات، قفازات، أحزمة",
+        ),
+        t(
+          "Hand tools, power tools, and cutting equipment",
+          "أدوات يدوية وكهربائية ومعدات قطع",
+        ),
+        t("Industrial fasteners and hardware", "مثبتات ومعدات صناعية"),
+        t(
+          "Lubricants, sealants, and maintenance products",
+          "مواد التشحيم والعوازل ومنتجات الصيانة",
+        ),
+        t(
+          "Conveyor systems and material handling",
+          "أنظمة النقل والتداول المواد",
+        ),
+      ],
+    },
+    {
+      icon: Globe,
+      title: t("General Trading & Commodities", "التجارة العامة والسلع"),
+      color: "text-brand-terracotta",
+      bg: "bg-brand-terracotta/10",
+      summary: t(
+        "Wide-ranging import/export of commercial goods with competitive pricing and reliable global networks.",
+        "استيراد وتصدير واسع النطاق للبضائع التجارية بأسعار تنافسية وشبكات عالمية موثوقة.",
+      ),
+      details: [
+        t(
+          "Consumer goods import and distribution",
+          "استيراد وتوزيع السلع الاستهلاكية",
+        ),
+        t(
+          "Export facilitation for local manufacturers",
+          "تيسير التصدير للمصنعين المحليين",
+        ),
+        t("Commodity trading and brokering", "تجارة السلع والوساطة"),
+        t("Cross-border trade documentation", "توثيق التجارة عبر الحدود"),
+        t(
+          "Customs clearance advisory services",
+          "خدمات استشارية للتخليص الجمركي",
+        ),
+      ],
+    },
+    {
+      icon: Truck,
+      title: t("Logistics & Freight Management", "إدارة اللوجستيات والشحن"),
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+      summary: t(
+        "End-to-end freight management across sea, air, and road with full customs clearance support.",
+        "إدارة شاملة للشحن عبر البحر والجو والبر مع دعم كامل للتخليص الجمركي.",
+      ),
+      details: [
+        t(
+          "Sea freight FCL/LCL shipments",
+          "شحن بحري بحاويات كاملة وأجزاء حاويات",
+        ),
+        t(
+          "Air freight for time-sensitive cargo",
+          "شحن جوي للبضائع الحساسة للوقت",
+        ),
+        t("Cross-Gulf road freight services", "خدمات الشحن البري عبر الخليج"),
+        t("Customs clearance and documentation", "التخليص الجمركي والتوثيق"),
+        t("Warehousing and distribution in Oman", "التخزين والتوزيع في عُمان"),
+      ],
+    },
+    {
+      icon: Users,
+      title: t("Labour & Manpower Solutions", "حلول العمالة والقوى البشرية"),
+      color: "text-purple-700",
+      bg: "bg-purple-50",
+      summary: t(
+        "Comprehensive workforce supply, recruitment, and HR outsourcing for all industries in Oman.",
+        "توريد شاملة للقوى العاملة والتوظيف والاستعانة بمصادر خارجية للموارد البشرية لجميع الصناعات في عُمان.",
+      ),
+      details: [
+        t(
+          "Skilled and unskilled worker supply",
+          "توريد العمال المهرة وغير المهرة",
+        ),
+        t("Permanent and contract recruitment", "التوظيف الدائم والتعاقدي"),
+        t(
+          "HR outsourcing and payroll management",
+          "الاستعانة بمصادر خارجية للموارد البشرية وإدارة الرواتب",
+        ),
+        t(
+          "LMRA compliance and visa processing",
+          "الامتثال للوائح سوق العمل ومعالجة التأشيرات",
+        ),
+        t(
+          "Staff training and onboarding support",
+          "تدريب الموظفين ودعم الإعداد الوظيفي",
+        ),
+      ],
+    },
+    {
+      icon: Zap,
+      title: t("Solar & Renewable Energy", "الطاقة الشمسية والمتجددة"),
+      color: "text-yellow-600",
+      bg: "bg-yellow-50",
+      summary: t(
+        "Complete solar energy solutions — from power generation and storage to heating systems and accessories — for homes, businesses, and industry in Oman and the Gulf.",
+        "حلول طاقة شمسية كاملة — من توليد الطاقة والتخزين إلى أنظمة التسخين والملحقات — للمنازل والشركات والصناعة في عُمان والخليج.",
+      ),
+      details: [
+        t(
+          "Solar power generation systems (on-grid & off-grid)",
+          "أنظمة توليد الطاقة الشمسية (متصلة بالشبكة ومستقلة)",
+        ),
+        t(
+          "Solar power systems design and installation",
+          "تصميم وتركيب أنظمة الطاقة الشمسية",
+        ),
+        t(
+          "Energy storage and battery conversion solutions",
+          "حلول تخزين الطاقة وتحويل البطاريات",
+        ),
+        t(
+          "Solar heating and hot water systems",
+          "أنظمة التسخين الشمسي والمياه الساخنة",
+        ),
+        t(
+          "Solar components and accessories supply",
+          "توريد مكونات وملحقات الطاقة الشمسية",
+        ),
+      ],
+    },
+    {
+      icon: Wheat,
+      title: t("Seafood & Poultry Trading", "تجارة المأكولات البحرية والدواجن"),
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+      summary: t(
+        "Premium fresh and frozen seafood and certified poultry products, sourced globally and delivered reliably to food businesses across Oman and the GCC.",
+        "مأكولات بحرية طازجة ومجمدة متميزة ومنتجات دواجن معتمدة، يتم توريدها عالمياً وتسليمها بشكل موثوق لشركات الأغذية في عُمان والخليج.",
+      ),
+      details: [
+        t(
+          "Seafood: shrimp, tuna, salmon, mackerel, squid, cuttlefish, mussels, clams",
+          "مأكولات بحرية: روبيان، تونة، سلمون، ماكريل، حبار، سبيط، بلح البحر، حلزون البحر",
+        ),
+        t(
+          "Poultry: whole chicken (800g, 1000g, 1100g grades)",
+          "دواجن: دجاج كامل (فئات 800 جرام، 1000 جرام، 1100 جرام)",
+        ),
+        t(
+          "Eggs — fresh and graded for commercial supply",
+          "بيض — طازج ومصنف للتوريد التجاري",
+        ),
+        t(
+          "Cold-chain logistics and temperature-controlled delivery",
+          "لوجستيات السلسلة الباردة والتسليم بدرجة حرارة متحكم بها",
+        ),
+        t(
+          "Halal-certified sourcing and documentation",
+          "توريد وتوثيق معتمد حلال",
+        ),
+      ],
+    },
+    {
+      icon: Truck,
+      title: t("Tyres & Adhesives", "الإطارات والمواد اللاصقة"),
+      color: "text-slate-700",
+      bg: "bg-slate-100",
+      summary: t(
+        "Comprehensive supply of premium automotive, truck, and industrial tyres alongside high-performance adhesives, sealants, and bonding compounds for industrial applications across Oman and the GCC.",
+        "توريد شامل لإطارات سيارات وشاحنات وصناعية متميزة إلى جانب مواد لاصقة وعوازل عالية الأداء للتطبيقات الصناعية في عُمان والخليج.",
+      ),
+      details: [
+        t(
+          "Automotive tyres: passenger car, SUV, and 4x4 tyres from leading brands",
+          "إطارات السيارات: سيارات ركاب، سيارات دفع رباعي من ماركات رائدة",
+        ),
+        t(
+          "Truck & heavy-vehicle tyres: radial and bias-ply for all tonnage",
+          "إطارات الشاحنات والمركبات الثقيلة: شعاعية ومتقاطعة لجميع الأوزان",
+        ),
+        t(
+          "Off-road and industrial tyres for construction and mining equipment",
+          "إطارات طرق وعرة وصناعية لمعدات البناء والتعدين",
+        ),
+        t(
+          "Industrial adhesives: structural, assembly, and multi-purpose bonding",
+          "مواد لاصقة صناعية: هيكلية وتجميعية ومتعددة الأغراض",
+        ),
+        t(
+          "Sealants: silicone, polyurethane, and acrylic for construction and manufacturing",
+          "عوازل: سيليكون وبولي يوريثان وأكريليك للبناء والتصنيع",
+        ),
+        t(
+          "Specialty bonding products: epoxies, contact adhesives, and industrial tapes",
+          "منتجات ربط متخصصة: إيبوكسي ومواد لاصقة تلامسية وأشرطة صناعية",
+        ),
+      ],
+    },
+  ];
+}
 
 function ServicesPage({
   navigate,
@@ -1715,6 +1916,7 @@ function ServicesPage({
 }: { navigate: (p: Page) => void; lang: Lang }) {
   const t = makeT(lang);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const services = getServices(lang);
 
   return (
     <div>
@@ -1779,7 +1981,9 @@ function ServicesPage({
                       onClick={() => setExpanded(isOpen ? null : i)}
                       className="text-brand-teal font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all"
                     >
-                      {isOpen ? "Show Less" : "Learn More"}
+                      {isOpen
+                        ? t("Show Less", "عرض أقل")
+                        : t("Learn More", "اعرف المزيد")}
                       <ChevronRight
                         size={14}
                         className={`transition-transform ${isOpen ? "rotate-90" : ""}`}
@@ -1936,121 +2140,210 @@ type PortfolioFilter =
   | "Solar"
   | "Tyres";
 
-const projects = [
-  {
-    name: "Muscat Grand Mall Infrastructure Supply",
-    sector: "Construction" as PortfolioFilter,
-    year: "2023",
-    desc: "Supplied structural steel, aggregates, and MEP materials for the expansion of Muscat Grand Mall's retail and parking complex.",
-    image: "/assets/generated/sector-construction.dim_600x400.jpg",
-  },
-  {
-    name: "The Wave Muscat Development — Building Materials",
-    sector: "Construction" as PortfolioFilter,
-    year: "2022",
-    desc: "Long-term supply agreement for premium building materials throughout the prestigious The Wave Muscat waterfront development.",
-    image: "/assets/generated/sector-construction.dim_600x400.jpg",
-  },
-  {
-    name: "GCC Grain Import Program",
-    sector: "Agriculture" as PortfolioFilter,
-    year: "2023",
-    desc: "Managed bulk import of wheat, rice, and barley from South Asia for a consortium of GCC food distributors.",
-    image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
-  },
-  {
-    name: "Sohar Industrial Zone Supply",
-    sector: "Industrial" as PortfolioFilter,
-    year: "2022",
-    desc: "Supplied safety gear, industrial fasteners, and maintenance consumables to multiple factories in Sohar Free Zone.",
-    image: "/assets/generated/sector-industrial.dim_600x400.jpg",
-  },
-  {
-    name: "Muscat New Urban Manpower Contract",
-    sector: "Manpower" as PortfolioFilter,
-    year: "2024",
-    desc: "Placed 120+ construction workers, electricians, and site supervisors for Muscat's new urban Phase 2 housing project.",
-    image: "/assets/generated/labour-workers.dim_600x400.jpg",
-  },
-  {
-    name: "Mina Sultan Qaboos Logistics Hub",
-    sector: "Trading" as PortfolioFilter,
-    year: "2023",
-    desc: "Managed import logistics and customs clearance for a major retail chain's new Mina Sultan Qaboos distribution centre.",
-    image: "/assets/generated/sector-trading.dim_600x400.jpg",
-  },
-  {
-    name: "Oman Oil Facility Supplies",
-    sector: "Industrial" as PortfolioFilter,
-    year: "2021",
-    desc: "Long-term industrial supply contract for PPE, tools, and safety equipment to an Oman oil facility.",
-    image: "/assets/generated/sector-industrial.dim_600x400.jpg",
-  },
-  {
-    name: "Regional Food Distribution Network",
-    sector: "Agriculture" as PortfolioFilter,
-    year: "2022",
-    desc: "Established a multi-supplier fresh produce distribution network across Oman, Kuwait, and Qatar.",
-    image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
-  },
-  // New seafood / poultry / solar projects
-  {
-    name: "Gulf Shrimp & Tuna Export Program",
-    sector: "Seafood" as PortfolioFilter,
-    year: "2024",
-    desc: "Coordinated large-scale export of fresh Omani shrimp, yellowfin tuna, and mackerel to premium buyers in the UAE, Qatar, and Saudi Arabia.",
-    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
-  },
-  {
-    name: "Muscat Seafood Cold-Chain Distribution",
-    sector: "Seafood" as PortfolioFilter,
-    year: "2023",
-    desc: "Set up a temperature-controlled distribution network supplying squid, cuttlefish, mussels, and clams to supermarkets and restaurants across Muscat.",
-    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
-  },
-  {
-    name: "Integrated Poultry Supply — Oman Retailers",
-    sector: "Poultry" as PortfolioFilter,
-    year: "2024",
-    desc: "Long-term supply agreement delivering graded whole chicken (800g, 1000g, 1100g classes) and fresh eggs to leading Omani supermarket chains.",
-    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
-  },
-  {
-    name: "Poultry & Egg Distribution — Sohar Region",
-    sector: "Poultry" as PortfolioFilter,
-    year: "2023",
-    desc: "Established reliable weekly delivery cycles for standardised chicken cuts and free-range eggs to food service businesses and hotels in Sohar.",
-    image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
-  },
-  {
-    name: "Muscat Commercial Solar Rooftop Installation",
-    sector: "Solar" as PortfolioFilter,
-    year: "2024",
-    desc: "Supplied and commissioned a 500 kW rooftop solar power generation system for a large commercial warehouse complex in Al Rusayl Industrial Estate.",
-    image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
-  },
-  {
-    name: "Commercial Tyre Supply — Sohar Industrial Zone",
-    sector: "Tyres" as PortfolioFilter,
-    year: "2024",
-    desc: "Long-term supply contract for truck and heavy-vehicle tyres to multiple logistics and construction companies operating in Sohar Free Zone and Port of Sohar.",
-    image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
-  },
-  {
-    name: "Industrial Adhesives & Sealants — Muscat Construction Projects",
-    sector: "Tyres" as PortfolioFilter,
-    year: "2023",
-    desc: "Supplied structural adhesives, polyurethane sealants, and specialty bonding compounds to three major construction contractors for Muscat commercial and residential developments.",
-    image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
-  },
-  {
-    name: "Solar Water Heating — Residential Development",
-    sector: "Solar" as PortfolioFilter,
-    year: "2023",
-    desc: "Delivered and installed solar heating and domestic hot water systems across 120 villas in a new Muscat residential development, reducing energy costs by 65%.",
-    image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
-  },
-];
+function getProjects(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      name: t(
+        "Muscat Grand Mall Infrastructure Supply",
+        "توريد البنية التحتية لمسقط غراند مول",
+      ),
+      sector: "Construction" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Supplied structural steel, aggregates, and MEP materials for the expansion of Muscat Grand Mall's retail and parking complex.",
+        "توريد الفولاذ الهيكلي والركام ومواد الميكانيكا والكهرباء لتوسعة مجمع التسوق والمواقف في مسقط غراند مول.",
+      ),
+      image: "/assets/generated/sector-construction.dim_600x400.jpg",
+    },
+    {
+      name: t(
+        "The Wave Muscat Development — Building Materials",
+        "تطوير ذا ويف مسقط — مواد البناء",
+      ),
+      sector: "Construction" as PortfolioFilter,
+      year: "2022",
+      desc: t(
+        "Long-term supply agreement for premium building materials throughout the prestigious The Wave Muscat waterfront development.",
+        "اتفاقية توريد طويلة الأمد لمواد البناء المتميزة في مشروع ذا ويف مسقط الواجهة البحرية المرموق.",
+      ),
+      image: "/assets/generated/sector-construction.dim_600x400.jpg",
+    },
+    {
+      name: t("GCC Grain Import Program", "برنامج استيراد الحبوب الخليجي"),
+      sector: "Agriculture" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Managed bulk import of wheat, rice, and barley from South Asia for a consortium of GCC food distributors.",
+        "إدارة استيراد الجملة من القمح والأرز والشعير من جنوب آسيا لتحالف موزعي الأغذية الخليجيين.",
+      ),
+      image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
+    },
+    {
+      name: t("Sohar Industrial Zone Supply", "توريد المنطقة الصناعية بصحار"),
+      sector: "Industrial" as PortfolioFilter,
+      year: "2022",
+      desc: t(
+        "Supplied safety gear, industrial fasteners, and maintenance consumables to multiple factories in Sohar Free Zone.",
+        "توريد معدات السلامة والمثبتات الصناعية والمستهلكات للصيانة لمصانع متعددة في المنطقة الحرة بصحار.",
+      ),
+      image: "/assets/generated/sector-industrial.dim_600x400.jpg",
+    },
+    {
+      name: t(
+        "Muscat New Urban Manpower Contract",
+        "عقد القوى العاملة لمشروع مسقط الحضري الجديد",
+      ),
+      sector: "Manpower" as PortfolioFilter,
+      year: "2024",
+      desc: t(
+        "Placed 120+ construction workers, electricians, and site supervisors for Muscat's new urban Phase 2 housing project.",
+        "توظيف أكثر من 120 عامل بناء وكهربائي ومشرف موقع لمشروع الإسكان الحضري الجديد بمسقط المرحلة الثانية.",
+      ),
+      image: "/assets/generated/labour-workers.dim_600x400.jpg",
+    },
+    {
+      name: t(
+        "Mina Sultan Qaboos Logistics Hub",
+        "مركز لوجستيات ميناء السلطان قابوس",
+      ),
+      sector: "Trading" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Managed import logistics and customs clearance for a major retail chain's new Mina Sultan Qaboos distribution centre.",
+        "إدارة لوجستيات الاستيراد والتخليص الجمركي لمركز التوزيع الجديد لسلسلة تجزئة كبرى في ميناء السلطان قابوس.",
+      ),
+      image: "/assets/generated/sector-trading.dim_600x400.jpg",
+    },
+    {
+      name: t("Oman Oil Facility Supplies", "توريدات منشأة النفط في عُمان"),
+      sector: "Industrial" as PortfolioFilter,
+      year: "2021",
+      desc: t(
+        "Long-term industrial supply contract for PPE, tools, and safety equipment to an Oman oil facility.",
+        "عقد توريد صناعي طويل الأمد لمعدات الحماية الشخصية والأدوات ومعدات السلامة لمنشأة نفطية عُمانية.",
+      ),
+      image: "/assets/generated/sector-industrial.dim_600x400.jpg",
+    },
+    {
+      name: t(
+        "Regional Food Distribution Network",
+        "شبكة توزيع الغذاء الإقليمية",
+      ),
+      sector: "Agriculture" as PortfolioFilter,
+      year: "2022",
+      desc: t(
+        "Established a multi-supplier fresh produce distribution network across Oman, Kuwait, and Qatar.",
+        "إنشاء شبكة توزيع للمنتجات الطازجة متعددة الموردين عبر عُمان والكويت وقطر.",
+      ),
+      image: "/assets/generated/sector-agriculture.dim_600x400.jpg",
+    },
+    {
+      name: t(
+        "Gulf Shrimp & Tuna Export Program",
+        "برنامج تصدير الروبيان والتونة الخليجي",
+      ),
+      sector: "Seafood" as PortfolioFilter,
+      year: "2024",
+      desc: t(
+        "Coordinated large-scale export of fresh Omani shrimp, yellowfin tuna, and mackerel to premium buyers in the UAE, Qatar, and Saudi Arabia.",
+        "تنسيق تصدير واسع النطاق للروبيان العُماني الطازج والتونة الصفراء الزعانف والماكريل لمشترين متميزين في الإمارات وقطر والسعودية.",
+      ),
+      image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+    },
+    {
+      name: t(
+        "Muscat Seafood Cold-Chain Distribution",
+        "توزيع المأكولات البحرية بالسلسلة الباردة في مسقط",
+      ),
+      sector: "Seafood" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Set up a temperature-controlled distribution network supplying squid, cuttlefish, mussels, and clams to supermarkets and restaurants across Muscat.",
+        "إنشاء شبكة توزيع بدرجة حرارة متحكم بها لتوريد الحبار والسبيط وبلح البحر وحلزون البحر للسوبرماركت والمطاعم في مسقط.",
+      ),
+      image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+    },
+    {
+      name: t(
+        "Integrated Poultry Supply — Oman Retailers",
+        "توريد الدواجن المتكامل — تجار التجزئة في عُمان",
+      ),
+      sector: "Poultry" as PortfolioFilter,
+      year: "2024",
+      desc: t(
+        "Long-term supply agreement delivering graded whole chicken (800g, 1000g, 1100g classes) and fresh eggs to leading Omani supermarket chains.",
+        "اتفاقية توريد طويلة الأمد لتسليم الدجاج الكامل المصنف (فئات 800 جرام، 1000 جرام، 1100 جرام) والبيض الطازج لسلاسل السوبرماركت الرائدة في عُمان.",
+      ),
+      image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+    },
+    {
+      name: t(
+        "Poultry & Egg Distribution — Sohar Region",
+        "توزيع الدواجن والبيض — منطقة صحار",
+      ),
+      sector: "Poultry" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Established reliable weekly delivery cycles for standardised chicken cuts and free-range eggs to food service businesses and hotels in Sohar.",
+        "إنشاء دورات تسليم أسبوعية موثوقة لقطع الدجاج المعيارية والبيض المرعوي لشركات الخدمات الغذائية والفنادق في صحار.",
+      ),
+      image: "/assets/generated/fmcg-seafood-poultry.dim_800x600.jpg",
+    },
+    {
+      name: t(
+        "Muscat Commercial Solar Rooftop Installation",
+        "تركيب الطاقة الشمسية التجارية على الأسطح في مسقط",
+      ),
+      sector: "Solar" as PortfolioFilter,
+      year: "2024",
+      desc: t(
+        "Supplied and commissioned a 500 kW rooftop solar power generation system for a large commercial warehouse complex in Al Rusayl Industrial Estate.",
+        "توريد وتشغيل نظام توليد طاقة شمسية على السطح بقدرة 500 كيلوواط لمجمع مستودعات تجاري كبير في المنطقة الصناعية بالرسيل.",
+      ),
+      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+    },
+    {
+      name: t(
+        "Commercial Tyre Supply — Sohar Industrial Zone",
+        "توريد الإطارات التجارية — المنطقة الصناعية بصحار",
+      ),
+      sector: "Tyres" as PortfolioFilter,
+      year: "2024",
+      desc: t(
+        "Long-term supply contract for truck and heavy-vehicle tyres to multiple logistics and construction companies operating in Sohar Free Zone and Port of Sohar.",
+        "عقد توريد طويل الأمد لإطارات الشاحنات والمركبات الثقيلة لعدة شركات لوجستية وإنشائية تعمل في المنطقة الحرة بصحار وميناء صحار.",
+      ),
+      image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+    },
+    {
+      name: t(
+        "Industrial Adhesives & Sealants — Muscat Construction Projects",
+        "المواد اللاصقة والعوازل الصناعية — مشاريع البناء في مسقط",
+      ),
+      sector: "Tyres" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Supplied structural adhesives, polyurethane sealants, and specialty bonding compounds to three major construction contractors for Muscat commercial and residential developments.",
+        "توريد مواد لاصقة هيكلية وعوازل بولي يوريثان ومركبات ربط متخصصة لثلاثة مقاولي بناء رئيسيين في مشاريع مسقط التجارية والسكنية.",
+      ),
+      image: "/assets/generated/division-tyres-adhesives-hero.dim_1400x600.jpg",
+    },
+    {
+      name: t(
+        "Solar Water Heating — Residential Development",
+        "تسخين المياه بالطاقة الشمسية — المشروع السكني",
+      ),
+      sector: "Solar" as PortfolioFilter,
+      year: "2023",
+      desc: t(
+        "Delivered and installed solar heating and domestic hot water systems across 120 villas in a new Muscat residential development, reducing energy costs by 65%.",
+        "تسليم وتركيب أنظمة التسخين الشمسي والمياه الساخنة المنزلية في 120 فيلا في مشروع سكني جديد بمسقط، مما أدى إلى تخفيض تكاليف الطاقة بنسبة 65٪.",
+      ),
+      image: "/assets/generated/division-solar-hero.dim_1400x600.jpg",
+    },
+  ];
+}
 
 const sectorColors: Record<string, { text: string; bg: string }> = {
   Construction: { text: "text-orange-700", bg: "bg-orange-50" },
@@ -2070,6 +2363,7 @@ function PortfolioPage({
 }: { navigate: (p: Page) => void; lang: Lang }) {
   const t = makeT(lang);
   const [filter, setFilter] = useState<PortfolioFilter>("All");
+  const projects = getProjects(lang);
   const filters: PortfolioFilter[] = [
     "All",
     "Solar",
@@ -2082,6 +2376,19 @@ function PortfolioPage({
     "Trading",
     "Manpower",
   ];
+  // Translated display labels for filters (state values remain English for filtering)
+  const filterLabels: Record<PortfolioFilter, string> = {
+    All: t("All", "الكل"),
+    Solar: t("Solar", "شمسية"),
+    Seafood: t("Seafood", "مأكولات بحرية"),
+    Poultry: t("Poultry", "دواجن"),
+    Tyres: t("Tyres", "إطارات"),
+    Construction: t("Construction", "بناء"),
+    Agriculture: t("Agriculture", "زراعة"),
+    Industrial: t("Industrial", "صناعة"),
+    Trading: t("Trading", "تجارة"),
+    Manpower: t("Manpower", "قوى عاملة"),
+  };
   const filtered = (
     filter === "All" ? projects : projects.filter((p) => p.sector === filter)
   )
@@ -2117,7 +2424,7 @@ function PortfolioPage({
                     : "bg-white text-foreground border border-border hover:border-brand-teal hover:text-brand-teal"
                 }`}
               >
-                {f}
+                {filterLabels[f]}
               </button>
             ))}
           </div>
@@ -2160,7 +2467,7 @@ function PortfolioPage({
                       <span
                         className={`inline-block text-xs font-semibold px-2 py-1 rounded-full mb-3 ${col.bg} ${col.text}`}
                       >
-                        {project.sector}
+                        {filterLabels[project.sector]}
                       </span>
                       <h3 className="font-display font-bold text-foreground text-sm leading-snug mb-2">
                         {project.name}
@@ -2180,7 +2487,10 @@ function PortfolioPage({
               data-ocid="portfolio.projects.empty_state"
               className="text-center py-20 text-muted-foreground"
             >
-              No projects in this category yet.
+              {t(
+                "No projects in this category yet.",
+                "لا توجد مشاريع في هذه الفئة بعد.",
+              )}
             </div>
           )}
         </div>
@@ -2204,79 +2514,123 @@ function PortfolioPage({
             className="text-center mb-12"
           >
             <span className="inline-block text-brand-gold font-semibold text-sm tracking-widest uppercase mb-3 text-outline">
-              Coming Soon
+              {t("Coming Soon", "قريباً")}
             </span>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-white text-outline">
-              Upcoming Projects
+              {t("Upcoming Projects", "المشاريع القادمة")}
             </h2>
             <div className="w-16 h-1 bg-brand-gold mx-auto mt-4 rounded-full" />
             <p className="text-white/70 mt-4 max-w-2xl mx-auto text-base leading-relaxed text-outline">
-              Projects currently in planning or execution phase — watch this
-              space for updates.
+              {t(
+                "Projects currently in planning or execution phase — watch this space for updates.",
+                "مشاريع في مرحلة التخطيط أو التنفيذ — تابعونا للتحديثات.",
+              )}
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                name: "Large-Scale Solar Farm — South Oman",
-                sector: "Solar",
+                name: t(
+                  "Large-Scale Solar Farm — South Oman",
+                  "مزرعة طاقة شمسية واسعة — جنوب عُمان",
+                ),
+                sector: t("Solar", "شمسية"),
                 eta: "Q3 2025",
-                desc: "5 MW ground-mounted solar power generation plant with battery energy storage for an industrial client in the South Oman region. Engineering and procurement phase underway.",
+                desc: t(
+                  "5 MW ground-mounted solar power generation plant with battery energy storage for an industrial client in the South Oman region. Engineering and procurement phase underway.",
+                  "محطة توليد طاقة شمسية أرضية بقدرة 5 ميجاواط مع تخزين طاقة البطاريات لعميل صناعي في جنوب عُمان. مرحلة الهندسة والمشتريات جارية.",
+                ),
                 icon: Zap,
                 color: "text-yellow-400",
                 bg: "bg-yellow-400/10 border-yellow-400/30",
               },
               {
-                name: "Salmon & Tuna Cold-Chain Export to EU",
-                sector: "Seafood",
+                name: t(
+                  "Salmon & Tuna Cold-Chain Export to EU",
+                  "تصدير السلمون والتونة بالسلسلة الباردة إلى أوروبا",
+                ),
+                sector: t("Seafood", "مأكولات بحرية"),
                 eta: "Q4 2025",
-                desc: "Establishing an export pipeline for premium Omani and Indian Ocean salmon and bluefin tuna to European buyers, including compliance with EU food safety standards.",
+                desc: t(
+                  "Establishing an export pipeline for premium Omani and Indian Ocean salmon and bluefin tuna to European buyers, including compliance with EU food safety standards.",
+                  "إنشاء مسار تصدير لسلمون عُماني متميز وتونة زعنفة زرقاء من المحيط الهندي لمشترين أوروبيين، بما يتوافق مع معايير سلامة الغذاء الأوروبية.",
+                ),
                 icon: Globe,
                 color: "text-blue-300",
                 bg: "bg-blue-300/10 border-blue-300/30",
               },
               {
-                name: "Poultry Processing Facility Partnership",
-                sector: "Poultry",
+                name: t(
+                  "Poultry Processing Facility Partnership",
+                  "شراكة منشأة معالجة الدواجن",
+                ),
+                sector: t("Poultry", "دواجن"),
                 eta: "Q1 2026",
-                desc: "Strategic partnership with a licensed Omani poultry processor to establish a grading, packaging, and cold-storage facility for chicken and egg distribution across the GCC.",
+                desc: t(
+                  "Strategic partnership with a licensed Omani poultry processor to establish a grading, packaging, and cold-storage facility for chicken and egg distribution across the GCC.",
+                  "شراكة استراتيجية مع معالج دواجن عُماني مرخص لإنشاء منشأة تصنيف وتغليف وتخزين بارد لتوزيع الدجاج والبيض عبر دول الخليج.",
+                ),
                 icon: Wheat,
                 color: "text-amber-300",
                 bg: "bg-amber-300/10 border-amber-300/30",
               },
               {
-                name: "Solar Energy Storage Systems — Commercial Rollout",
-                sector: "Solar",
+                name: t(
+                  "Solar Energy Storage Systems — Commercial Rollout",
+                  "أنظمة تخزين الطاقة الشمسية — الطرح التجاري",
+                ),
+                sector: t("Solar", "شمسية"),
                 eta: "Q2 2026",
-                desc: "Rollout of modular lithium battery storage systems paired with solar installations across commercial and industrial clients in Muscat and Sohar.",
+                desc: t(
+                  "Rollout of modular lithium battery storage systems paired with solar installations across commercial and industrial clients in Muscat and Sohar.",
+                  "طرح أنظمة تخزين بطاريات ليثيوم معيارية مقترنة بتركيبات الطاقة الشمسية لدى العملاء التجاريين والصناعيين في مسقط وصحار.",
+                ),
                 icon: Zap,
                 color: "text-yellow-400",
                 bg: "bg-yellow-400/10 border-yellow-400/30",
               },
               {
-                name: "Seafood Distribution Hub — Muscat Port",
-                sector: "Seafood",
+                name: t(
+                  "Seafood Distribution Hub — Muscat Port",
+                  "مركز توزيع المأكولات البحرية — ميناء مسقط",
+                ),
+                sector: t("Seafood", "مأكولات بحرية"),
                 eta: "Q3 2026",
-                desc: "Development of a dedicated seafood import, grading, and distribution hub at Muscat port to streamline shrimp, squid, and fish supply to hotels, restaurants, and retailers.",
+                desc: t(
+                  "Development of a dedicated seafood import, grading, and distribution hub at Muscat port to streamline shrimp, squid, and fish supply to hotels, restaurants, and retailers.",
+                  "تطوير مركز متخصص لاستيراد وتصنيف وتوزيع المأكولات البحرية في ميناء مسقط لتبسيط توريد الروبيان والحبار والأسماك للفنادق والمطاعم والتجزئة.",
+                ),
                 icon: Globe,
                 color: "text-blue-300",
                 bg: "bg-blue-300/10 border-blue-300/30",
               },
               {
-                name: "Integrated Poultry & Seafood FMCG Export Program",
-                sector: "Poultry",
+                name: t(
+                  "Integrated Poultry & Seafood FMCG Export Program",
+                  "برنامج تصدير الدواجن والمأكولات البحرية المتكامل",
+                ),
+                sector: t("Poultry", "دواجن"),
                 eta: "Q4 2026",
-                desc: "Combined FMCG export program targeting GCC and East African markets — bundling graded chicken, eggs, and certified frozen seafood under a single RAYAT-managed supply chain.",
+                desc: t(
+                  "Combined FMCG export program targeting GCC and East African markets — bundling graded chicken, eggs, and certified frozen seafood under a single RAYAT-managed supply chain.",
+                  "برنامج تصدير سلع استهلاكية مشترك يستهدف أسواق الخليج وشرق أفريقيا — يجمع الدجاج المصنف والبيض والمأكولات البحرية المجمدة المعتمدة في سلسلة إمداد واحدة تديرها رايات.",
+                ),
                 icon: Wheat,
                 color: "text-amber-300",
                 bg: "bg-amber-300/10 border-amber-300/30",
               },
               {
-                name: "Gulf-Wide Tyre & Adhesives Distribution Network",
-                sector: "Tyres",
+                name: t(
+                  "Gulf-Wide Tyre & Adhesives Distribution Network",
+                  "شبكة توزيع الإطارات والمواد اللاصقة الخليجية",
+                ),
+                sector: t("Tyres", "إطارات"),
                 eta: "Q2 2026",
-                desc: "Establishing a regional distribution hub in Muscat to supply premium automotive and industrial tyres plus construction-grade adhesives and sealants to dealers and contractors across Oman, UAE, and Qatar.",
+                desc: t(
+                  "Establishing a regional distribution hub in Muscat to supply premium automotive and industrial tyres plus construction-grade adhesives and sealants to dealers and contractors across Oman, UAE, and Qatar.",
+                  "إنشاء مركز توزيع إقليمي في مسقط لتوريد إطارات سيارات وصناعية متميزة ومواد لاصقة وعوازل درجة البناء للوكلاء والمقاولين في عُمان والإمارات وقطر.",
+                ),
                 icon: Truck,
                 color: "text-slate-300",
                 bg: "bg-slate-300/10 border-slate-300/30",
@@ -2318,7 +2672,11 @@ function PortfolioPage({
                       />
                     </div>
                     <span className="text-white/40 text-xs">
-                      {i < 2 ? "In Progress" : i < 4 ? "Planning" : "Scoping"}
+                      {i < 2
+                        ? t("In Progress", "جارٍ")
+                        : i < 4
+                          ? t("Planning", "تخطيط")
+                          : t("Scoping", "استكشاف")}
                     </span>
                   </div>
                 </motion.div>
@@ -2333,10 +2691,10 @@ function PortfolioPage({
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: "40+", label: "Projects Completed" },
-              { value: "OMR 5M+", label: "Value Delivered" },
-              { value: "8+", label: "Years Active" },
-              { value: "30+", label: "Happy Clients" },
+              { value: "40+", label: t("Projects Completed", "مشاريع مكتملة") },
+              { value: "OMR 5M+", label: t("Value Delivered", "قيمة محققة") },
+              { value: "8+", label: t("Years Active", "سنوات نشاط") },
+              { value: "30+", label: t("Happy Clients", "عملاء راضون") },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -2388,73 +2746,105 @@ function PortfolioPage({
 }
 
 // ─── OUR TEAM PAGE ─────────────────────────────────────────────────────────────
-const teamMembers = [
-  {
-    initials: "AR",
-    name: "Abdullah Al-Rayat",
-    title: "Founder & Managing Director",
-    bio: "With over 20 years of experience in Oman's industrial sector, Abdullah founded RAYAT with a vision to build a world-class trading and industrial company. He leads the company's strategic direction and key client relationships.",
-    color: "bg-brand-teal text-white",
-  },
-  {
-    initials: "MK",
-    name: "Mohammed Al-Khalifa",
-    title: "Deputy Managing Director",
-    bio: "Mohammed brings 15 years of commercial trading expertise to RAYAT. He oversees the company's trading operations, supplier relations, and international business development partnerships.",
-    color: "bg-brand-teal-dark text-white",
-  },
-  {
-    initials: "PS",
-    name: "Priya Sharma",
-    title: "Head of Operations",
-    bio: "Priya manages day-to-day operations across all service lines, ensuring seamless delivery for clients. Her expertise in logistics and process optimization has significantly improved our service turnaround times.",
-    color: "bg-brand-terracotta text-white",
-  },
-  {
-    initials: "TH",
-    name: "Tariq Hassan",
-    title: "Business Development Manager",
-    bio: "Tariq leads RAYAT's growth initiatives, with a focus on expanding manpower services and forging new partnerships in the GCC market. He has brought over 20 new enterprise clients to RAYAT in the past two years.",
-    color: "bg-brand-gold text-gray-900",
-  },
-];
+function getTeamMembers(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      initials: "AR",
+      name: "Abdullah Al-Rayat",
+      title: t("Founder & Managing Director", "المؤسس والمدير العام"),
+      bio: t(
+        "With over 20 years of experience in Oman's industrial sector, Abdullah founded RAYAT with a vision to build a world-class trading and industrial company. He leads the company's strategic direction and key client relationships.",
+        "بخبرة تمتد لأكثر من 20 عاماً في القطاع الصناعي العُماني، أسّس عبدالله رايات برؤية لبناء شركة تجارة وصناعة عالمية المستوى. يقود الاتجاه الاستراتيجي للشركة وعلاقات العملاء الرئيسية.",
+      ),
+      color: "bg-brand-teal text-white",
+    },
+    {
+      initials: "MK",
+      name: "Mohammed Al-Khalifa",
+      title: t("Deputy Managing Director", "نائب المدير العام"),
+      bio: t(
+        "Mohammed brings 15 years of commercial trading expertise to RAYAT. He oversees the company's trading operations, supplier relations, and international business development partnerships.",
+        "يضيف محمد 15 عاماً من الخبرة في التجارة التجارية لرايات. يشرف على العمليات التجارية للشركة وعلاقات الموردين وشراكات تطوير الأعمال الدولية.",
+      ),
+      color: "bg-brand-teal-dark text-white",
+    },
+    {
+      initials: "PS",
+      name: "Priya Sharma",
+      title: t("Head of Operations", "رئيسة العمليات"),
+      bio: t(
+        "Priya manages day-to-day operations across all service lines, ensuring seamless delivery for clients. Her expertise in logistics and process optimization has significantly improved our service turnaround times.",
+        "تدير بريا العمليات اليومية عبر جميع خطوط الخدمة، مما يضمن التسليم السلس للعملاء. أدت خبرتها في اللوجستيات وتحسين العمليات إلى تحسين ملحوظ في أوقات تسليم الخدمات.",
+      ),
+      color: "bg-brand-terracotta text-white",
+    },
+    {
+      initials: "TH",
+      name: "Tariq Hassan",
+      title: t("Business Development Manager", "مدير تطوير الأعمال"),
+      bio: t(
+        "Tariq leads RAYAT's growth initiatives, with a focus on expanding manpower services and forging new partnerships in the GCC market. He has brought over 20 new enterprise clients to RAYAT in the past two years.",
+        "يقود طارق مبادرات نمو رايات، مع التركيز على توسيع خدمات القوى العاملة وإقامة شراكات جديدة في سوق الخليج. جلب أكثر من 20 عميلاً مؤسسياً جديداً لرايات في العامين الماضيين.",
+      ),
+      color: "bg-brand-gold text-gray-900",
+    },
+  ];
+}
 
-const values = [
-  {
-    icon: ShieldCheck,
-    title: "Integrity",
-    desc: "We operate with full transparency in all business dealings, honouring every commitment we make.",
-    color: "text-brand-teal",
-    bg: "bg-brand-teal/10",
-  },
-  {
-    icon: Star,
-    title: "Excellence",
-    desc: "Every service, every delivery, every interaction — we hold ourselves to the highest possible standard.",
-    color: "text-brand-gold",
-    bg: "bg-brand-gold/10",
-  },
-  {
-    icon: Handshake,
-    title: "Partnership",
-    desc: "We view our clients and suppliers as long-term partners, not just transactions.",
-    color: "text-brand-terracotta",
-    bg: "bg-brand-terracotta/10",
-  },
-  {
-    icon: Lightbulb,
-    title: "Innovation",
-    desc: "We continuously seek smarter ways to source, supply, and serve in an evolving market.",
-    color: "text-purple-700",
-    bg: "bg-purple-50",
-  },
-];
+function getCompanyValues(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      icon: ShieldCheck,
+      title: t("Integrity", "النزاهة"),
+      desc: t(
+        "We operate with full transparency in all business dealings, honouring every commitment we make.",
+        "نعمل بشفافية كاملة في جميع المعاملات التجارية، نفي بكل التزام نقدمه.",
+      ),
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+    },
+    {
+      icon: Star,
+      title: t("Excellence", "التميز"),
+      desc: t(
+        "Every service, every delivery, every interaction — we hold ourselves to the highest possible standard.",
+        "كل خدمة، كل تسليم، كل تفاعل — نمسك أنفسنا بأعلى المعايير الممكنة.",
+      ),
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+    },
+    {
+      icon: Handshake,
+      title: t("Partnership", "الشراكة"),
+      desc: t(
+        "We view our clients and suppliers as long-term partners, not just transactions.",
+        "ننظر إلى عملائنا وموردينا كشركاء على المدى البعيد، وليس مجرد معاملات.",
+      ),
+      color: "text-brand-terracotta",
+      bg: "bg-brand-terracotta/10",
+    },
+    {
+      icon: Lightbulb,
+      title: t("Innovation", "الابتكار"),
+      desc: t(
+        "We continuously seek smarter ways to source, supply, and serve in an evolving market.",
+        "نسعى باستمرار إلى طرق أذكى للتوريد والتزويد والخدمة في سوق متطور.",
+      ),
+      color: "text-purple-700",
+      bg: "bg-purple-50",
+    },
+  ];
+}
 
 function TeamPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
   const t = makeT(lang);
+  const teamMembers = getTeamMembers(lang);
+  const values = getCompanyValues(lang);
   return (
     <div>
       <PageHero
@@ -2603,81 +2993,114 @@ function TeamPage({
 }
 
 // ─── NEWS PAGE ─────────────────────────────────────────────────────────────────
-const newsArticles = [
-  {
-    title: "RAYAT Expands Manpower Services to Include Hospitality Sector",
-    date: "January 2026",
-    month: "JAN",
-    year: "2026",
-    excerpt:
-      "RAYAT Industries has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Oman's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Sultanate.",
-    category: "Company News",
-    color: "text-brand-teal",
-    bg: "bg-brand-teal/10",
-  },
-  {
-    title: "New Partnership with South Asian Labour Agencies Announced",
-    date: "December 2025",
-    month: "DEC",
-    year: "2025",
-    excerpt:
-      "RAYAT has signed formal partnership agreements with five major recruitment agencies in India, Bangladesh, and Nepal. These partnerships will significantly expand our candidate pool and reduce placement timelines for clients requiring large-scale workforce deployments. The agreements cover all worker categories from skilled trades to domestic workers.",
-    category: "Partnerships",
-    color: "text-purple-700",
-    bg: "bg-purple-50",
-  },
-  {
-    title:
-      "RAYAT Wins Preferred Supplier Status at Major Bahrain Construction Project",
-    date: "November 2025",
-    month: "NOV",
-    year: "2025",
-    excerpt:
-      "Following a competitive tender process, RAYAT Industries has been awarded preferred supplier status for a landmark infrastructure development in Oman's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over OMR 2 million. This represents RAYAT's largest single construction supply contract to date.",
-    category: "Awards",
-    color: "text-brand-gold",
-    bg: "bg-brand-gold/10",
-  },
-  {
-    title: "Agriculture Trading Volume Grows 40% in FY2025",
-    date: "October 2025",
-    month: "OCT",
-    year: "2025",
-    excerpt:
-      "RAYAT's agriculture and food trading division has recorded a 40% year-on-year increase in trading volume for FY2025. Growth was driven by expanded grain import programs and new contracts with Omani food manufacturers. The company plans to further invest in cold-chain logistics infrastructure to support fresh produce trading in 2026.",
-    category: "Financial",
-    color: "text-green-700",
-    bg: "bg-green-50",
-  },
-  {
-    title: "LMRA Compliance Certification Renewed for 2025–2026",
-    date: "September 2025",
-    month: "SEP",
-    year: "2025",
-    excerpt:
-      "RAYAT Industries has successfully renewed its Oman Labor Law compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Omani labour law — giving our clients complete confidence in every placement we make.",
-    category: "Compliance",
-    color: "text-brand-terracotta",
-    bg: "bg-brand-terracotta/10",
-  },
-  {
-    title: "Company Celebrates 10th Anniversary in Bahrain Market",
-    date: "August 2025",
-    month: "AUG",
-    year: "2025",
-    excerpt:
-      "RAYAT Industries marked its 10th anniversary in the Oman market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and trading services. The Managing Director pledged continued investment in Oman's economic future.",
-    category: "Milestone",
-    color: "text-blue-700",
-    bg: "bg-blue-50",
-  },
-];
+function getNewsArticles(lang: Lang) {
+  const t = makeT(lang);
+  return [
+    {
+      title: t(
+        "RAYAT Expands Manpower Services to Include Hospitality Sector",
+        "رايات توسع خدمات القوى العاملة لتشمل قطاع الضيافة",
+      ),
+      date: t("January 2026", "يناير 2026"),
+      month: t("JAN", "يناير"),
+      year: "2026",
+      excerpt: t(
+        "RAYAT Industries has officially expanded its manpower division to include dedicated hospitality and service industry placements. The move follows growing demand from Oman's hospitality sector, which is experiencing rapid growth ahead of major tourism initiatives. RAYAT will now supply hotel staff, housekeeping teams, and food service personnel to hotels and resorts across the Sultanate.",
+        "وسّعت رايات للصناعات رسمياً قسم القوى العاملة لديها ليشمل توظيفاً متخصصاً في قطاع الضيافة والخدمات. جاء ذلك استجابةً للطلب المتزايد من قطاع الضيافة العُماني الذي يشهد نمواً متسارعاً. ستوفر رايات طاقم الفنادق وفرق التدبير المنزلي وموظفي خدمة الطعام للفنادق والمنتجعات.",
+      ),
+      category: t("Company News", "أخبار الشركة"),
+      color: "text-brand-teal",
+      bg: "bg-brand-teal/10",
+    },
+    {
+      title: t(
+        "New Partnership with South Asian Labour Agencies Announced",
+        "الإعلان عن شراكة جديدة مع وكالات العمالة في جنوب آسيا",
+      ),
+      date: t("December 2025", "ديسمبر 2025"),
+      month: t("DEC", "ديسمبر"),
+      year: "2025",
+      excerpt: t(
+        "RAYAT has signed formal partnership agreements with five major recruitment agencies in India, Bangladesh, and Nepal. These partnerships will significantly expand our candidate pool and reduce placement timelines for clients requiring large-scale workforce deployments. The agreements cover all worker categories from skilled trades to domestic workers.",
+        "وقّعت رايات اتفاقيات شراكة رسمية مع خمس وكالات توظيف كبرى في الهند وبنغلاديش ونيبال. ستوسع هذه الشراكات تجمع المرشحين لدينا وتقلل مواعيد التوظيف. تغطي الاتفاقيات جميع فئات العمال من المهن المهارية إلى العمالة المنزلية.",
+      ),
+      category: t("Partnerships", "الشراكات"),
+      color: "text-purple-700",
+      bg: "bg-purple-50",
+    },
+    {
+      title: t(
+        "RAYAT Wins Preferred Supplier Status at Major Bahrain Construction Project",
+        "رايات تحصل على وضع المورد المفضل في مشروع بناء كبير",
+      ),
+      date: t("November 2025", "نوفمبر 2025"),
+      month: t("NOV", "نوفمبر"),
+      year: "2025",
+      excerpt: t(
+        "Following a competitive tender process, RAYAT Industries has been awarded preferred supplier status for a landmark infrastructure development in Oman's Northern Governorate. The multi-year supply contract covers structural steel, aggregates, and MEP materials valued at over OMR 2 million. This represents RAYAT's largest single construction supply contract to date.",
+        "بعد عملية مناقصة تنافسية، مُنحت رايات للصناعات وضع المورد المفضل لتطوير بنية تحتية بارزة في المحافظة الشمالية بعُمان. يغطي عقد التوريد متعدد السنوات الفولاذ الهيكلي والركام ومواد الميكانيكا والكهرباء بقيمة تتجاوز مليوني ريال عُماني.",
+      ),
+      category: t("Awards", "الجوائز"),
+      color: "text-brand-gold",
+      bg: "bg-brand-gold/10",
+    },
+    {
+      title: t(
+        "Agriculture Trading Volume Grows 40% in FY2025",
+        "حجم تجارة الزراعة ينمو 40٪ في السنة المالية 2025",
+      ),
+      date: t("October 2025", "أكتوبر 2025"),
+      month: t("OCT", "أكتوبر"),
+      year: "2025",
+      excerpt: t(
+        "RAYAT's agriculture and food trading division has recorded a 40% year-on-year increase in trading volume for FY2025. Growth was driven by expanded grain import programs and new contracts with Omani food manufacturers. The company plans to further invest in cold-chain logistics infrastructure to support fresh produce trading in 2026.",
+        "سجّل قسم التجارة الزراعية والغذائية في رايات زيادة بنسبة 40٪ سنوياً في حجم التداول للسنة المالية 2025. وكان النمو مدفوعاً ببرامج استيراد الحبوب الموسعة وعقود جديدة مع المصنعين الغذائيين العُمانيين.",
+      ),
+      category: t("Financial", "المالية"),
+      color: "text-green-700",
+      bg: "bg-green-50",
+    },
+    {
+      title: t(
+        "LMRA Compliance Certification Renewed for 2025–2026",
+        "تجديد شهادة الامتثال لقانون العمل للفترة 2025-2026",
+      ),
+      date: t("September 2025", "سبتمبر 2025"),
+      month: t("SEP", "سبتمبر"),
+      year: "2025",
+      excerpt: t(
+        "RAYAT Industries has successfully renewed its Oman Labor Law compliance certification for the 2025–2026 period. This certification confirms our commitment to ethical recruitment practices, fair employment terms, and full compliance with Omani labour law — giving our clients complete confidence in every placement we make.",
+        "جدّدت رايات للصناعات بنجاح شهادة الامتثال لقانون العمل العُماني للفترة 2025-2026. تؤكد هذه الشهادة التزامنا بممارسات التوظيف الأخلاقية وشروط العمل العادلة والامتثال الكامل لقانون العمل العُماني.",
+      ),
+      category: t("Compliance", "الامتثال"),
+      color: "text-brand-terracotta",
+      bg: "bg-brand-terracotta/10",
+    },
+    {
+      title: t(
+        "Company Celebrates 10th Anniversary in Bahrain Market",
+        "الشركة تحتفل بالذكرى السنوية العاشرة في السوق العُمانية",
+      ),
+      date: t("August 2025", "أغسطس 2025"),
+      month: t("AUG", "أغسطس"),
+      year: "2025",
+      excerpt: t(
+        "RAYAT Industries marked its 10th anniversary in the Oman market with a gala dinner for clients, partners, and employees. The milestone reflects a decade of growth from a small trading enterprise to a diversified company spanning industrial supply, agriculture, logistics, and trading services. The Managing Director pledged continued investment in Oman's economic future.",
+        "احتفلت رايات للصناعات بذكراها السنوية العاشرة في السوق العُمانية بحفل عشاء للعملاء والشركاء والموظفين. يعكس هذا الإنجاز عقداً من النمو من مشروع تجاري صغير إلى شركة متنوعة تمتد عبر الإمدادات الصناعية والزراعة واللوجستيات والخدمات التجارية.",
+      ),
+      category: t("Milestone", "الإنجازات"),
+      color: "text-blue-700",
+      bg: "bg-blue-50",
+    },
+  ];
+}
 
 function NewsPage({
   navigate,
   lang,
 }: { navigate: (p: Page) => void; lang: Lang }) {
   const t = makeT(lang);
+  const newsArticles = getNewsArticles(lang);
   const [email, setEmail] = useState("");
 
   return (
